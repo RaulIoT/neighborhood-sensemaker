@@ -360,6 +360,98 @@
         .credits-panel a {
             color: #9ecbff;
         }
+        .map-compass {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 78px;
+            height: 78px;
+            z-index: 1000;
+            border-radius: 50%;
+            border: 1px solid #3a3a3a;
+            background: rgba(0, 0, 0, 0.72);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .map-compass.hidden {
+            display: none;
+        }
+        .map-compass-face {
+            position: relative;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            border: 1px solid #4a4a4a;
+        }
+        .map-compass-face::before,
+        .map-compass-face::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.16);
+        }
+        .map-compass-face::before {
+            left: 50%;
+            top: 7px;
+            bottom: 7px;
+            width: 1px;
+            transform: translateX(-50%);
+        }
+        .map-compass-face::after {
+            top: 50%;
+            left: 7px;
+            right: 7px;
+            height: 1px;
+            transform: translateY(-50%);
+        }
+        .map-compass-dir {
+            position: absolute;
+            font-size: 10px;
+            font-weight: 700;
+            color: #d8d8d8;
+            line-height: 1;
+            transform: translate(-50%, -50%);
+        }
+        .map-compass-dir.n {
+            top: 8px;
+            left: 50%;
+            color: #fff;
+        }
+        .map-compass-dir.e {
+            top: 50%;
+            left: calc(100% - 8px);
+        }
+        .map-compass-dir.s {
+            top: calc(100% - 8px);
+            left: 50%;
+        }
+        .map-compass-dir.w {
+            top: 50%;
+            left: 8px;
+        }
+        .map-compass-arrow {
+            position: absolute;
+            left: 50%;
+            top: 18px;
+            width: 2px;
+            height: 22px;
+            background: #f2f2f2;
+            transform: translateX(-50%);
+            border-radius: 1px;
+        }
+        .map-compass-arrow::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: -6px;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 7px solid #f2f2f2;
+        }
         .leaflet-popup-content-wrapper,
         .leaflet-popup-tip {
             background: #000;
@@ -610,16 +702,28 @@
                                 <select id="basemapSelect" aria-label="Basemap style">
                                     <option value="positron">Positron (gray)</option>
                                     <option value="osm">OpenStreetMap</option>
+                                    <option value="osm3d">OpenStreetMap + 3D buildings</option>
+                                    <option value="positron3dgray">Positron (gray) + 3D buildings</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div id="mapCompass" class="map-compass hidden" aria-hidden="true" aria-label="Compass">
+                <div class="map-compass-face">
+                    <span class="map-compass-dir n">N</span>
+                    <span class="map-compass-dir e">E</span>
+                    <span class="map-compass-dir s">S</span>
+                    <span class="map-compass-dir w">W</span>
+                    <span class="map-compass-arrow" aria-hidden="true"></span>
+                </div>
+            </div>
             <div class="map-bottom-ui">
                 <button id="creditsToggleBtn" class="credits-btn" type="button">Show credits & privacy</button>
                 <div id="creditsPanel" class="credits-panel hidden">
-                    Basemap styles: OpenFreeMap Positron (gray) and OpenStreetMap standard. Basemap data: OpenStreetMap contributors (ODbL).<br>
+                    Basemap styles: OpenFreeMap Positron (gray), OpenStreetMap standard, OpenStreetMap + 3D buildings, and Positron (gray) + 3D buildings.<br>
+                    Basemap data: OpenStreetMap contributors (ODbL). 3D buildings: OSM Buildings (visible from zoom 15+).<br>
                     Web map stack: QGIS, qgis2web, Leaflet, MapLibre.<br>
                     Project: SPT UE Course 2026.<br>
                     Photos and AI labels shown here are course project material. Reuse only with permission from the project owners.<br>
@@ -647,6 +751,7 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
+        <script src="js/OSMBuildings-Leaflet.js"></script>
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js"></script>
         <script src="data/spt_ai_combined_1.js"></script>
@@ -661,7 +766,23 @@
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var BASEMAP_MODES = {
             positron: 'Positron (gray)',
-            osm: 'OpenStreetMap'
+            osm: 'OpenStreetMap',
+            osm3d: 'OpenStreetMap + 3D buildings',
+            positron3dgray: 'Positron (gray) + 3D buildings'
+        };
+        var OSM_BUILDINGS_TILE_URL = 'https://{s}.data.osmbuildings.org/0.2/59fcc2e8/tile/{z}/{x}/{y}.json';
+        var OSM_BUILDINGS_MIN_ZOOM = 15;
+        var OSM_BUILDINGS_STYLES = {
+            osm3d: {
+                color: '#d4c7bc',
+                roofColor: '#f1ebe7',
+                shadows: true
+            },
+            positron3dgray: {
+                color: '#8f8f8f',
+                roofColor: '#bdbdbd',
+                shadows: true
+            }
         };
         var currentBasemapMode = 'positron';
         try {
@@ -677,24 +798,73 @@
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         });
-        if (currentBasemapMode === 'osm') {
+        var baseLayerOsmBuildings3d = null;
+        if (typeof OSMBuildings !== 'undefined') {
+            baseLayerOsmBuildings3d = new OSMBuildings();
+            // Use explicit https tile endpoint for better browser compatibility.
+            baseLayerOsmBuildings3d.load(OSM_BUILDINGS_TILE_URL);
+        }
+        function is3dBasemapMode(modeKey) {
+            return modeKey === 'osm3d' || modeKey === 'positron3dgray';
+        }
+        function usesOsmBasemap(modeKey) {
+            return modeKey === 'osm' || modeKey === 'osm3d';
+        }
+        function apply3dBuildingStyle(modeKey) {
+            if (!baseLayerOsmBuildings3d) return;
+            var styleKey = OSM_BUILDINGS_STYLES[modeKey] ? modeKey : 'osm3d';
+            baseLayerOsmBuildings3d.style(OSM_BUILDINGS_STYLES[styleKey]);
+        }
+        if (usesOsmBasemap(currentBasemapMode)) {
             baseLayerOsm.addTo(map);
         } else {
             baseLayerPositron.addTo(map);
+        }
+        if (is3dBasemapMode(currentBasemapMode)) {
+            if (baseLayerOsmBuildings3d) {
+                apply3dBuildingStyle(currentBasemapMode);
+                map.addLayer(baseLayerOsmBuildings3d);
+                if (map.getZoom() < OSM_BUILDINGS_MIN_ZOOM) {
+                    map.setZoom(OSM_BUILDINGS_MIN_ZOOM);
+                }
+            } else {
+                currentBasemapMode = usesOsmBasemap(currentBasemapMode) ? 'osm' : 'positron';
+            }
+        }
+        function updateCompassVisibility() {
+            if (!mapCompass) return;
+            var visible = is3dBasemapMode(currentBasemapMode);
+            mapCompass.classList.toggle('hidden', !visible);
+            mapCompass.setAttribute('aria-hidden', visible ? 'false' : 'true');
         }
         function setBasemapMode(modeKey, persist) {
             var nextMode = BASEMAP_MODES[modeKey] ? modeKey : 'positron';
             currentBasemapMode = nextMode;
             if (map.hasLayer(baseLayerPositron)) map.removeLayer(baseLayerPositron);
             if (map.hasLayer(baseLayerOsm)) map.removeLayer(baseLayerOsm);
-            if (currentBasemapMode === 'osm') {
+            if (baseLayerOsmBuildings3d && map.hasLayer(baseLayerOsmBuildings3d)) {
+                map.removeLayer(baseLayerOsmBuildings3d);
+            }
+            if (usesOsmBasemap(currentBasemapMode)) {
                 baseLayerOsm.addTo(map);
             } else {
                 baseLayerPositron.addTo(map);
             }
+            if (is3dBasemapMode(currentBasemapMode)) {
+                if (baseLayerOsmBuildings3d) {
+                    apply3dBuildingStyle(currentBasemapMode);
+                    map.addLayer(baseLayerOsmBuildings3d);
+                    if (map.getZoom() < OSM_BUILDINGS_MIN_ZOOM) {
+                        map.setZoom(OSM_BUILDINGS_MIN_ZOOM);
+                    }
+                } else {
+                    currentBasemapMode = usesOsmBasemap(currentBasemapMode) ? 'osm' : 'positron';
+                }
+            }
             if (basemapSelect) {
                 basemapSelect.value = currentBasemapMode;
             }
+            updateCompassVisibility();
             if (persist) {
                 try {
                     localStorage.setItem('basemapMode', currentBasemapMode);
@@ -809,6 +979,7 @@
         var paletteSliderCurrent = document.getElementById('paletteSliderCurrent');
         var paletteSliderTicks = document.querySelectorAll('.palette-slider-tick');
         var basemapSelect = document.getElementById('basemapSelect');
+        var mapCompass = document.getElementById('mapCompass');
         var creditsToggleBtn = document.getElementById('creditsToggleBtn');
         var creditsPanel = document.getElementById('creditsPanel');
         if (creditsToggleBtn && creditsPanel) {
@@ -917,7 +1088,7 @@
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
-        // Basemap can be switched between Positron (gray) and OpenStreetMap standard.
+        // Basemap can be switched between Positron/OpenStreetMap, with optional 3D building overlays.
         function pop_leppavaara_photo_index_ai_1(feature, layer) {
             var p = feature.properties || {};
             var nameKey = String(p['new_name'] || p['original_name'] || '');

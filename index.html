@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
+        <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css">
+        <style>
+        html, body {
+            background: #000;
+            color: #fff;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #map {
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+        }
+        .map-top-ui {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            max-width: min(92vw, 460px);
+            background: rgba(0, 0, 0, 0.72);
+            color: #fff;
+            border: 1px solid #2f2f2f;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
+        .map-labels-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .map-labels-subtitle {
+            font-size: 13px;
+            color: #efefef;
+            line-height: 1.5;
+        }
+        .map-labels-list {
+            margin: 6px 0 6px 18px;
+            padding: 0;
+        }
+        .map-labels-list li {
+            margin: 2px 0;
+        }
+        .map-score-legend {
+            margin-top: 8px;
+        }
+        .map-score-legend-bar {
+            position: relative;
+            overflow: hidden;
+            height: 10px;
+            border-radius: 999px;
+            border: 1px solid #444;
+            background: linear-gradient(90deg, #d73027 0%, #f46d43 25%, #fee08b 50%, #66bd63 75%, #1a9850 100%);
+        }
+        .map-score-legend-bar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(0, 0, 0, 0.22) 0 1px,
+                transparent 1px 20%
+            );
+            pointer-events: none;
+        }
+        .map-score-legend-scales {
+            position: relative;
+            height: 16px;
+            margin-top: 4px;
+        }
+        .map-score-legend-scale {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #ddd;
+            line-height: 1;
+        }
+        .map-score-legend-scale.major span {
+            font-size: 12px;
+            font-weight: 700;
+            color: #f0f0f0;
+        }
+        .map-score-legend-scale.minor {
+            font-size: 8px;
+            color: #a8a8a8;
+            left: 0;
+            right: 0;
+        }
+        .map-score-legend-scale.minor span {
+            position: absolute;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        .map-score-legend-scale.minor .p10 { left: 10%; }
+        .map-score-legend-scale.minor .p20 { left: 20%; }
+        .map-score-legend-scale.minor .p30 { left: 30%; }
+        .map-score-legend-scale.minor .p40 { left: 40%; }
+        .map-score-legend-scale.minor .p60 { left: 60%; }
+        .map-score-legend-scale.minor .p70 { left: 70%; }
+        .map-score-legend-scale.minor .p80 { left: 80%; }
+        .map-score-legend-scale.minor .p90 { left: 90%; }
+        .map-score-legend-notes {
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 11px;
+            color: #d7d7d7;
+        }
+        .map-dot-key {
+            margin: 8px 0 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12px;
+        }
+        .map-dot-key-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .map-dot-sample {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fbc07d;
+            border: 1.6px solid #232323;
+            box-sizing: border-box;
+            flex: 0 0 14px;
+            position: relative;
+        }
+        .map-dot-sample-dark::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 2px;
+            bottom: 2px;
+            width: 1.8px;
+            transform: translateX(-50%);
+            background: #000;
+            border-radius: 1px;
+        }
+        .leaflet-tooltip.mankkaa-dark-line-tooltip {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: #000;
+            font-size: 13px;
+            font-weight: 900;
+            line-height: 1;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            pointer-events: none;
+        }
+        .leaflet-tooltip.mankkaa-dark-line-tooltip::before {
+            display: none !important;
+        }
+        .map-top-controls {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .map-top-controls .map-ui-row {
+            margin-top: 0;
+            width: 100%;
+        }
+        .map-top-controls .map-ui-row button {
+            width: 100%;
+            min-width: 0;
+        }
+        .palette-slider-ui {
+            position: static;
+            z-index: auto;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            padding: 0;
+            color: #fff;
+            font-family: inherit;
+            width: 100%;
+        }
+        .palette-toggle-btn {
+            background: #0f0f0f;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 4px 8px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            margin-bottom: 6px;
+        }
+        .palette-toggle-btn:hover {
+            background: #171717;
+        }
+        .palette-slider-body {
+            max-height: 300px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height 0.22s ease, opacity 0.2s ease;
+        }
+        .palette-slider-ui.collapsed .palette-slider-body {
+            max-height: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .palette-slider-current {
+            font-size: 12px;
+            color: #d0e7ff;
+            margin-bottom: 6px;
+            min-height: 16px;
+        }
+        .palette-slider-inner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .palette-slider-track {
+            width: 22px;
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #scorePaletteSlider {
+            width: 130px;
+            height: 20px;
+            transform: rotate(90deg);
+            transform-origin: center;
+            margin: 0;
+            accent-color: #9ecbff;
+            cursor: pointer;
+        }
+        .palette-slider-ticks {
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 11px;
+            color: #bdbdbd;
+            line-height: 1;
+            user-select: none;
+        }
+        .palette-slider-tick {
+            cursor: pointer;
+            transition: color 0.15s ease;
+        }
+        .palette-slider-tick.active {
+            color: #fff;
+            font-weight: 700;
+        }
+        .basemap-mode-row {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .basemap-mode-row label {
+            font-size: 11px;
+            color: #d6d6d6;
+        }
+        .basemap-mode-row select {
+            background: #0f0f0f;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 4px 6px;
+            font-size: 12px;
+            width: 100%;
+        }
+        .map-ui-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .map-ui-row select {
+            background: #0f0f0f;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 4px 6px;
+            font-size: 12px;
+        }
+        .map-ui-row button {
+            background: #0f0f0f;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 4px 8px;
+            min-width: 96px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .map-ui-row button:hover {
+            background: #171717;
+        }
+        .map-labels-block.hidden {
+            display: none;
+        }
+        .map-bottom-ui {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            max-width: min(92vw, 520px);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
+        .credits-btn {
+            background: rgba(0, 0, 0, 0.76);
+            color: #fff;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .credits-btn:hover {
+            background: rgba(20, 20, 20, 0.86);
+        }
+        .credits-panel {
+            margin-top: 8px;
+            background: rgba(0, 0, 0, 0.82);
+            color: #ddd;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .credits-panel.hidden {
+            display: none;
+        }
+        .credits-panel a {
+            color: #9ecbff;
+        }
+        .leaflet-popup-content-wrapper,
+        .leaflet-popup-tip {
+            background: #000;
+            color: #fff;
+        }
+        .leaflet-popup {
+            max-width: calc(100vw - 20px);
+        }
+        .leaflet-popup-content-wrapper {
+            max-width: min(92vw, 860px);
+            overflow: hidden;
+            box-sizing: border-box;
+            border: 1px solid #222;
+        }
+        .leaflet-popup-tip-container,
+        .leaflet-popup-tip {
+            display: none;
+        }
+        .leaflet-popup-content {
+            font-size: clamp(10px, 1.35vw, 14px);
+            line-height: 1.35;
+            margin: 8px 10px;
+            width: min(84vw, 420px);
+            max-width: 100%;
+            max-height: min(70vh, 640px);
+            overflow: auto;
+            box-sizing: border-box;
+            overflow-wrap: anywhere;
+        }
+        .leaflet-popup-content table {
+            color: #fff;
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .leaflet-popup-content th,
+        .leaflet-popup-content td {
+            border-bottom: 1px solid #333;
+            padding: 4px 6px;
+            vertical-align: top;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .leaflet-popup-content th {
+            text-align: left;
+            color: #ddd;
+            white-space: normal;
+            width: 38%;
+        }
+        .leaflet-popup-content a {
+            color: #9ecbff;
+        }
+        .popup-photo-thumb {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            max-height: min(38vh, 340px);
+            object-fit: contain;
+            border: 1px solid #333;
+            border-radius: 6px;
+            cursor: zoom-in;
+        }
+        .popup-photo-actions {
+            margin-top: 6px;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .photo-open-btn {
+            background: #121212;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .photo-open-btn:hover {
+            background: #1a1a1a;
+        }
+        @media (min-width: 1024px) {
+            .map-top-ui {
+                max-width: min(78vw, 700px);
+                padding: 12px 14px;
+            }
+            .map-labels-title {
+                font-size: 16px;
+            }
+            .map-labels-subtitle {
+                font-size: 13px;
+            }
+            .map-ui-row button {
+                font-size: 13px;
+                min-width: 112px;
+                padding: 6px 10px;
+            }
+            .leaflet-popup-content {
+                font-size: clamp(12px, 0.95vw, 15px);
+                width: min(56vw, 720px);
+                max-width: 100%;
+            }
+            .popup-photo-thumb {
+                max-width: 100%;
+                max-height: min(52vh, 560px);
+            }
+        }
+        @media (min-width: 1440px) {
+            .map-top-ui {
+                max-width: min(70vw, 860px);
+            }
+            .leaflet-popup-content {
+                font-size: clamp(13px, 0.85vw, 16px);
+                width: min(52vw, 860px);
+                max-width: 100%;
+            }
+            .popup-photo-thumb {
+                max-width: 100%;
+                max-height: min(58vh, 700px);
+            }
+        }
+        @media (orientation: landscape) and (max-width: 1024px) {
+            .leaflet-popup-content {
+                width: min(78vw, 760px);
+                max-width: 100%;
+                max-height: 66vh;
+            }
+            .popup-photo-thumb {
+                max-width: 100%;
+                max-height: min(62vh, 420px);
+            }
+            .map-top-ui {
+                max-width: min(95vw, 760px);
+            }
+        }
+        .photo-lightbox.hidden {
+            display: none;
+        }
+        .photo-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            background: rgba(0, 0, 0, 0.96);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+        }
+        .photo-lightbox img {
+            max-width: 100vw;
+            max-height: 100vh;
+            object-fit: contain;
+            transform-origin: center center;
+            transition: transform 0.08s linear;
+        }
+        .photo-lightbox-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        .photo-lightbox-controls button {
+            background: rgba(20, 20, 20, 0.9);
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 14px;
+            min-width: 40px;
+            cursor: pointer;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+            <div class="map-top-ui">
+                <div id="mapLabelsBlock" class="map-labels-block hidden">
+                    <div class="map-labels-title"><strong>Leppävaara + Kivenlahti + Mankkaa — AI Map (SPT UE 2026)</strong></div>
+                    <div class="map-labels-subtitle">
+                        Tap a dot to view the AI label, score, and short explanation.<br>
+                        Analysis is generated with ChatGPT (GPT-5) for the SPT Urban Experience course (2026).<br><br>
+                        Mankkaa lighting comparison (not color-only):
+                        <div class="map-dot-key">
+                            <div class="map-dot-key-row">
+                                <span class="map-dot-sample map-dot-sample-dark" aria-hidden="true"></span>
+                                <span>Dark (after sunset) = same rim + black inner line</span>
+                            </div>
+                            <div class="map-dot-key-row">
+                                <span class="map-dot-sample map-dot-sample-light" aria-hidden="true"></span>
+                                <span>Light (daylight) = same rim (no inner line)</span>
+                            </div>
+                        </div>
+                        <strong>Note:</strong> GPS can be inaccurate (especially under bridges), so dots may appear slightly shifted.<br>
+                        If a dot doesn’t open, try tapping it again.
+                    </div>
+                    <div class="map-score-legend" aria-label="AI overall score legend">
+                        <div id="scoreLegendBar" class="map-score-legend-bar"></div>
+                        <div class="map-score-legend-scales">
+                            <div class="map-score-legend-scale major">
+                                <span>-5</span>
+                                <span>0</span>
+                                <span>+5</span>
+                            </div>
+                            <div class="map-score-legend-scale minor">
+                                <span class="p10">-4</span>
+                                <span class="p20">-3</span>
+                                <span class="p30">-2</span>
+                                <span class="p40">-1</span>
+                                <span class="p60">+1</span>
+                                <span class="p70">+2</span>
+                                <span class="p80">+3</span>
+                                <span class="p90">+4</span>
+                            </div>
+                        </div>
+                        <div class="map-score-legend-notes">
+                            <span id="scoreLegendLowLabel">Red = lower score</span>
+                            <span id="scoreLegendHighLabel">Green = higher score</span>
+                        </div>
+                    </div>
+                    <div class="map-ui-row">
+                        <button id="gotoLeppaBtn" type="button">Leppävaara</button>
+                        <button id="gotoKivenlahtiBtn" type="button">Kivenlahti</button>
+                        <button id="gotoMankkaaBtn" type="button">Mankkaa</button>
+                    </div>
+                </div>
+                <div class="map-top-controls">
+                    <div class="map-ui-row">
+                        <button id="labelToggleBtn" type="button">Show labels</button>
+                    </div>
+                    <div id="paletteSliderUi" class="palette-slider-ui" aria-label="Score color mode control">
+                        <button id="paletteSliderToggleBtn" class="palette-toggle-btn" type="button" aria-expanded="true">Hide color mode</button>
+                        <div id="paletteSliderBody" class="palette-slider-body">
+                            <div id="paletteSliderCurrent" class="palette-slider-current">Trichromacy</div>
+                            <div class="palette-slider-inner">
+                                <div class="palette-slider-track">
+                                    <input id="scorePaletteSlider" type="range" min="0" max="3" step="1" value="0" aria-label="Score color mode slider">
+                                </div>
+                                <div class="palette-slider-ticks">
+                                    <span class="palette-slider-tick active" data-mode="normal">Trichromacy</span>
+                                    <span class="palette-slider-tick" data-mode="redgreen">Red-Green CVD</span>
+                                    <span class="palette-slider-tick" data-mode="blueyellow">Blue-Yellow CVD</span>
+                                    <span class="palette-slider-tick" data-mode="mono">Monochrome</span>
+                                </div>
+                            </div>
+                            <div class="basemap-mode-row">
+                                <label for="basemapSelect">Basemap</label>
+                                <select id="basemapSelect" aria-label="Basemap style">
+                                    <option value="positron">Positron (gray)</option>
+                                    <option value="osm">OpenStreetMap</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="map-bottom-ui">
+                <button id="creditsToggleBtn" class="credits-btn" type="button">Show credits & privacy</button>
+                <div id="creditsPanel" class="credits-panel hidden">
+                    Basemap styles: OpenFreeMap Positron (gray) and OpenStreetMap standard. Basemap data: OpenStreetMap contributors (ODbL).<br>
+                    Web map stack: QGIS, qgis2web, Leaflet, MapLibre.<br>
+                    Project: SPT UE Course 2026.<br>
+                    Photos and AI labels shown here are course project material. Reuse only with permission from the project owners.<br>
+                    If publishing online, sanitize images first (faces/plates/addresses and EXIF location metadata).
+                </div>
+            </div>
+        </div>
+        <div id="photoLightbox" class="photo-lightbox hidden" aria-hidden="true">
+            <div class="photo-lightbox-controls">
+                <button id="photoZoomOutBtn" type="button" aria-label="Zoom out">-</button>
+                <button id="photoZoomInBtn" type="button" aria-label="Zoom in">+</button>
+                <button id="photoZoomResetBtn" type="button" aria-label="Reset zoom">100%</button>
+                <button id="photoCloseBtn" type="button" aria-label="Close image">×</button>
+            </div>
+            <img id="photoLightboxImg" alt="Fullscreen photo">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+        <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js"></script>
+        <script src="data/spt_ai_combined_1.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[60.15340833,24.63408333],[60.22122222,24.82517222]]);
+        var hash = new L.Hash(map);
+        var LEPPA_BOUNDS = [[60.21526667,24.81157222],[60.22122222,24.82517222]];
+        var KIVENLAHTI_BOUNDS = [[60.15340833,24.63408333],[60.15463611,24.63730556]];
+        var MANKKAA_BOUNDS = [[60.19366389,24.7659758],[60.1967887,24.77082222]];
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var BASEMAP_MODES = {
+            positron: 'Positron (gray)',
+            osm: 'OpenStreetMap'
+        };
+        var currentBasemapMode = 'positron';
+        try {
+            var savedBasemapMode = localStorage.getItem('basemapMode');
+            if (savedBasemapMode && BASEMAP_MODES[savedBasemapMode]) {
+                currentBasemapMode = savedBasemapMode;
+            }
+        } catch (e) {}
+        var baseLayerPositron = L.maplibreGL({
+            style: 'https://tiles.openfreemap.org/styles/positron'
+        });
+        var baseLayerOsm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        });
+        if (currentBasemapMode === 'osm') {
+            baseLayerOsm.addTo(map);
+        } else {
+            baseLayerPositron.addTo(map);
+        }
+        function setBasemapMode(modeKey, persist) {
+            var nextMode = BASEMAP_MODES[modeKey] ? modeKey : 'positron';
+            currentBasemapMode = nextMode;
+            if (map.hasLayer(baseLayerPositron)) map.removeLayer(baseLayerPositron);
+            if (map.hasLayer(baseLayerOsm)) map.removeLayer(baseLayerOsm);
+            if (currentBasemapMode === 'osm') {
+                baseLayerOsm.addTo(map);
+            } else {
+                baseLayerPositron.addTo(map);
+            }
+            if (basemapSelect) {
+                basemapSelect.value = currentBasemapMode;
+            }
+            if (persist) {
+                try {
+                    localStorage.setItem('basemapMode', currentBasemapMode);
+                } catch (e) {}
+            }
+        }
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // modify popup if contains media
+        function addClassToPopupIfMedia(content, popup) {
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            var imgTd = tempDiv.querySelector('td img');
+            if (imgTd) {
+                var src = imgTd.getAttribute('src');
+                if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp3|wav|ogg|aac)$/i.test(src)) {
+                    var audio = document.createElement('audio');
+                    audio.controls = true;
+                    audio.src = src;
+                    imgTd.parentNode.replaceChild(audio, imgTd);
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp4|webm|ogg|mov)$/i.test(src)) {
+                    var video = document.createElement('video');
+                    video.controls = true;
+                    video.src = src;
+                    video.style.width = "400px";
+                    video.style.height = "300px";
+                    video.style.maxHeight = "60vh";
+                    video.style.maxWidth = "60vw";
+                    imgTd.parentNode.replaceChild(video, imgTd);
+                    popup._contentNode.classList.add('media');
+                    // Aggiorna il popup quando il video carica i metadati
+                    video.addEventListener('loadedmetadata', function() {
+                        popup.update();
+                    });
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else {
+                    popup._contentNode.classList.remove('media');
+                }
+            } else {
+                popup._contentNode.classList.remove('media');
+            }
+        }
+        var zoomControl = L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
+        var labelToggleBtn = document.getElementById('labelToggleBtn');
+        var mapLabelsBlock = document.getElementById('mapLabelsBlock');
+        if (labelToggleBtn && mapLabelsBlock) {
+            var labelsVisible = false;
+            labelToggleBtn.addEventListener('click', function () {
+                labelsVisible = !labelsVisible;
+                if (labelsVisible) {
+                    mapLabelsBlock.classList.remove('hidden');
+                    labelToggleBtn.textContent = 'Hide labels';
+                } else {
+                    mapLabelsBlock.classList.add('hidden');
+                    labelToggleBtn.textContent = 'Show labels';
+                }
+            });
+        }
+        var gotoLeppaBtn = document.getElementById('gotoLeppaBtn');
+        var gotoKivenlahtiBtn = document.getElementById('gotoKivenlahtiBtn');
+        var gotoMankkaaBtn = document.getElementById('gotoMankkaaBtn');
+        if (gotoLeppaBtn) {
+            gotoLeppaBtn.addEventListener('click', function () {
+                map.fitBounds(LEPPA_BOUNDS, {padding: [20, 20]});
+            });
+        }
+        if (gotoKivenlahtiBtn) {
+            gotoKivenlahtiBtn.addEventListener('click', function () {
+                map.fitBounds(KIVENLAHTI_BOUNDS, {padding: [20, 20]});
+            });
+        }
+        if (gotoMankkaaBtn) {
+            gotoMankkaaBtn.addEventListener('click', function () {
+                map.fitBounds(MANKKAA_BOUNDS, {padding: [20, 20]});
+            });
+        }
+        var scoreLegendBar = document.getElementById('scoreLegendBar');
+        var scoreLegendLowLabel = document.getElementById('scoreLegendLowLabel');
+        var scoreLegendHighLabel = document.getElementById('scoreLegendHighLabel');
+        var paletteSliderUi = document.getElementById('paletteSliderUi');
+        var paletteSliderBody = document.getElementById('paletteSliderBody');
+        var paletteSliderToggleBtn = document.getElementById('paletteSliderToggleBtn');
+        var scorePaletteSlider = document.getElementById('scorePaletteSlider');
+        var paletteSliderCurrent = document.getElementById('paletteSliderCurrent');
+        var paletteSliderTicks = document.querySelectorAll('.palette-slider-tick');
+        var basemapSelect = document.getElementById('basemapSelect');
+        var creditsToggleBtn = document.getElementById('creditsToggleBtn');
+        var creditsPanel = document.getElementById('creditsPanel');
+        if (creditsToggleBtn && creditsPanel) {
+            creditsToggleBtn.addEventListener('click', function () {
+                var hidden = creditsPanel.classList.toggle('hidden');
+                creditsToggleBtn.textContent = hidden ? 'Show credits & privacy' : 'Hide credits & privacy';
+            });
+        }
+        var photoLightbox = document.getElementById('photoLightbox');
+        var photoLightboxImg = document.getElementById('photoLightboxImg');
+        var photoZoomInBtn = document.getElementById('photoZoomInBtn');
+        var photoZoomOutBtn = document.getElementById('photoZoomOutBtn');
+        var photoZoomResetBtn = document.getElementById('photoZoomResetBtn');
+        var photoCloseBtn = document.getElementById('photoCloseBtn');
+        var photoZoom = 1;
+        function setPhotoZoom(z) {
+            photoZoom = Math.max(0.5, Math.min(4, z));
+            if (photoLightboxImg) {
+                photoLightboxImg.style.transform = 'scale(' + photoZoom + ')';
+            }
+        }
+        function openPhotoLightbox(src) {
+            if (!photoLightbox || !photoLightboxImg) return;
+            photoLightboxImg.src = src;
+            setPhotoZoom(1);
+            photoLightbox.classList.remove('hidden');
+            photoLightbox.setAttribute('aria-hidden', 'false');
+            if (photoLightbox.requestFullscreen) {
+                photoLightbox.requestFullscreen().catch(function () {});
+            }
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(function () {});
+            }
+        }
+        function closePhotoLightbox() {
+            if (!photoLightbox || !photoLightboxImg) return;
+            photoLightbox.classList.add('hidden');
+            photoLightbox.setAttribute('aria-hidden', 'true');
+            photoLightboxImg.removeAttribute('src');
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(function () {});
+            }
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
+        }
+        function bindPopupImageInteractions(popup) {
+            if (!popup || !popup._contentNode) return;
+            var imgs = popup._contentNode.querySelectorAll('img');
+            imgs.forEach(function (img) {
+                if ((!img.getAttribute('src') || img.getAttribute('src') === '') && img.dataset.photoSrc) {
+                    img.setAttribute('src', img.dataset.photoSrc);
+                }
+                img.classList.add('popup-photo-thumb');
+                if (!img.dataset.lightboxBound) {
+                    img.dataset.lightboxBound = '1';
+                    img.addEventListener('click', function () {
+                        openPhotoLightbox(img.getAttribute('src') || img.dataset.photoSrc);
+                    });
+                }
+            });
+            var buttons = popup._contentNode.querySelectorAll('.photo-open-btn');
+            buttons.forEach(function (btn) {
+                if (!btn.dataset.lightboxBound) {
+                    btn.dataset.lightboxBound = '1';
+                    btn.addEventListener('click', function (ev) {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        var src = btn.getAttribute('data-photo-src');
+                        if (src) openPhotoLightbox(src);
+                    });
+                }
+            });
+        }
+        if (photoZoomInBtn) photoZoomInBtn.addEventListener('click', function () { setPhotoZoom(photoZoom + 0.2); });
+        if (photoZoomOutBtn) photoZoomOutBtn.addEventListener('click', function () { setPhotoZoom(photoZoom - 0.2); });
+        if (photoZoomResetBtn) photoZoomResetBtn.addEventListener('click', function () { setPhotoZoom(1); });
+        if (photoCloseBtn) photoCloseBtn.addEventListener('click', closePhotoLightbox);
+        if (photoLightbox) {
+            photoLightbox.addEventListener('click', function (e) {
+                if (e.target === photoLightbox) closePhotoLightbox();
+            });
+            photoLightbox.addEventListener('wheel', function (e) {
+                e.preventDefault();
+                setPhotoZoom(photoZoom + (e.deltaY < 0 ? 0.12 : -0.12));
+            }, { passive: false });
+        }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closePhotoLightbox();
+        });
+        // Safari-friendly delegated handler for dynamic popup content.
+        document.addEventListener('click', function (e) {
+            var target = e.target;
+            if (!target) return;
+            if (target.classList && target.classList.contains('popup-photo-thumb')) {
+                e.preventDefault();
+                openPhotoLightbox(target.getAttribute('src') || target.getAttribute('data-photo-src'));
+                return;
+            }
+            if (target.classList && target.classList.contains('photo-open-btn')) {
+                e.preventDefault();
+                var src = target.getAttribute('data-photo-src');
+                if (src) openPhotoLightbox(src);
+            }
+        }, true);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        // Basemap can be switched between Positron (gray) and OpenStreetMap standard.
+        function pop_leppavaara_photo_index_ai_1(feature, layer) {
+            var p = feature.properties || {};
+            var nameKey = String(p['new_name'] || p['original_name'] || '');
+            if (/^MankkaaDark_/i.test(nameKey) && layer && layer.bindTooltip) {
+                layer.bindTooltip('|', {
+                    permanent: true,
+                    direction: 'center',
+                    className: 'mankkaa-dark-line-tooltip',
+                    opacity: 1,
+                    interactive: false
+                });
+            }
+            function getBaseMarkerStyle() {
+                return style_spt_ai_combined_1_0(feature);
+            }
+            var placeVal = p['Place_name'] || p['street_name'] || p['place_slug'] || '';
+            var placeText = String(placeVal || p['place_slug'] || '')
+                .replace(/_/g, ' ')
+                .trim();
+            if (!placeText || placeText.toLowerCase() === 'unknown place') {
+                placeText = 'Place';
+            }
+            // Title-case each word for cleaner labels (e.g. Hatsinanpuisto, Perkkaantie).
+            placeText = placeText
+                .split(/\s+/)
+                .map(function (w) { return w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w; })
+                .join(' ');
+            var seqRaw = Number(p['location_sequence']);
+            var seqText = Number.isFinite(seqRaw) ? String(Math.round(seqRaw)).padStart(2, '0') : '00';
+            var areaPrefix = 'Leppävaara';
+            if (/^Kivenlahti_/i.test(nameKey)) {
+                areaPrefix = 'Kivenlahti';
+            } else if (/^Mankkaa/i.test(nameKey)) {
+                areaPrefix = 'Mankkaa';
+            }
+            var nameVal = areaPrefix + ' #' + seqText + ' ' + placeText;
+            var lonVal = p['longitude'];
+            var latVal = p['latitude'];
+            var lonLatVal = '';
+            if (lonVal !== null && lonVal !== undefined && latVal !== null && latVal !== undefined) {
+                lonLatVal = String(lonVal).replace(/'/g, '\\\'') + ', ' + String(latVal).replace(/'/g, '\\\'');
+            }
+
+            function row(label, value) {
+                if (value === null || value === undefined || value === '') return '';
+                return '<tr><th scope="row">' + label + '</th><td>' +
+                    autolinker.link(String(value).replace(/'/g, '\\\'').toLocaleString()) +
+                    '</td></tr>';
+            }
+
+            var rows = '';
+            rows += row('Name', nameVal);
+            rows += row('Lon, Lat', lonLatVal);
+            rows += row('Place', placeVal);
+            rows += row('AI Social', p['AI-Social_environment']);
+            rows += row('AI Active', p['AI-Active_environment']);
+            rows += row('AI Aesthetic', p['AI-Aesthetic_environment']);
+            rows += row('AI Atmosphere', p['AI-Atmosphere']);
+            rows += row('AI Significance', p['AI_significance']);
+            rows += row('AI overall score (-5 to +5)', p['AI_overall']);
+            rows += row('AI reasoning Social', p['AI_Social_environment_reason']);
+            rows += row('AI reasoning Active', p['AI_Active_environment_reason']);
+            rows += row('AI reasoning Aesthetic', p['AI_Aesthetic_environment_reason']);
+            rows += row('AI reasoning Atmosphere', p['AI_Atmosphere_reason']);
+            rows += row('AI reasoning Significance', p['AI_significance_reason']);
+
+            if (p['photo_path']) {
+                var img = String(p['photo_path'])
+                    .replace(/[\\/:]/g, '_').trim().replace(/'/g, '\\\'').replace(/"/g, '&quot;');
+                var src = 'images/' + img;
+                rows += '<tr><th scope="row">Photo</th><td>' +
+                    '<img class="popup-photo-thumb" loading="lazy" decoding="async" data-photo-src="' + src + '" alt="Photo">' +
+                    '<div class="popup-photo-actions"><button class="photo-open-btn" type="button" data-photo-src="' + src + '">Open fullscreen</button></div>' +
+                    '</td></tr>';
+            }
+
+            var popupContent = '<table>' + rows + '</table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+				layer.on('popupopen', function(e) {
+					addClassToPopupIfMedia(content, e.popup);
+                bindPopupImageInteractions(e.popup);
+                var baseMarkerStyle = getBaseMarkerStyle();
+                var openRadius = (baseMarkerStyle.radius || 6) * 1.3;
+                layer.setStyle({
+                    radius: openRadius,
+                    color: 'rgba(0,0,0,1.0)',
+                    dashArray: baseMarkerStyle.dashArray || '',
+                    fillColor: 'rgba(0,0,0,1.0)',
+                    weight: baseMarkerStyle.weight || 1,
+                    fillOpacity: baseMarkerStyle.fillOpacity || 1,
+                    opacity: baseMarkerStyle.opacity || 1
+                });
+				});
+            layer.on('popupclose', function() {
+                layer.setStyle(getBaseMarkerStyle());
+				});
+			layer.bindPopup(content, {
+                maxWidth: Math.min(900, Math.round(window.innerWidth * 0.92)),
+                minWidth: Math.min(260, Math.round(window.innerWidth * 0.62)),
+                maxHeight: Math.max(260, Math.round(window.innerHeight * 0.72)),
+                keepInView: true,
+                autoPanPaddingTopLeft: [16, 90],
+                autoPanPaddingBottomRight: [16, 90]
+            });
+        }
+
+        var SCORE_PALETTE_MODES = {
+            normal: {
+                label: 'Trichromacy',
+                neg: [215, 48, 39],
+                mid: [254, 224, 139],
+                pos: [26, 152, 80],
+                legendGradient: 'linear-gradient(90deg, #d73027 0%, #f46d43 25%, #fee08b 50%, #66bd63 75%, #1a9850 100%)',
+                lowLabel: 'Red = lower score',
+                highLabel: 'Green = higher score'
+            },
+            redgreen: {
+                label: 'Red-Green CVD',
+                neg: [44, 123, 182],
+                mid: [247, 247, 247],
+                pos: [230, 97, 1],
+                legendGradient: 'linear-gradient(90deg, #2c7bb6 0%, #a8d5e9 25%, #f7f7f7 50%, #fbc07d 75%, #e66101 100%)',
+                lowLabel: 'Blue = lower score',
+                highLabel: 'Orange = higher score'
+            },
+            blueyellow: {
+                label: 'Blue-Yellow CVD',
+                neg: [123, 50, 148],
+                mid: [247, 247, 247],
+                pos: [0, 136, 136],
+                legendGradient: 'linear-gradient(90deg, #7b3294 0%, #c2a5cf 25%, #f7f7f7 50%, #92c5de 75%, #008888 100%)',
+                lowLabel: 'Purple = lower score',
+                highLabel: 'Teal = higher score'
+            },
+            mono: {
+                label: 'Monochrome',
+                neg: [30, 30, 30],
+                mid: [145, 145, 145],
+                pos: [240, 240, 240],
+                legendGradient: 'linear-gradient(90deg, #1e1e1e 0%, #666666 25%, #919191 50%, #c6c6c6 75%, #f0f0f0 100%)',
+                lowLabel: 'Darker = lower score',
+                highLabel: 'Lighter = higher score'
+            }
+        };
+        var SCORE_PALETTE_ORDER = ['normal', 'redgreen', 'blueyellow', 'mono'];
+        var currentScorePaletteMode = 'normal';
+        var paletteSliderCollapsed = false;
+        try {
+            var savedScorePaletteMode = localStorage.getItem('scorePaletteMode');
+            if (savedScorePaletteMode && SCORE_PALETTE_MODES[savedScorePaletteMode]) {
+                currentScorePaletteMode = savedScorePaletteMode;
+            }
+            paletteSliderCollapsed = localStorage.getItem('scorePaletteCollapsed') === '1';
+        } catch (e) {}
+
+        function paletteModeToIndex(modeKey) {
+            var idx = SCORE_PALETTE_ORDER.indexOf(modeKey);
+            return idx >= 0 ? idx : 0;
+        }
+
+        function paletteIndexToMode(indexValue) {
+            var idx = Number(indexValue);
+            if (!Number.isFinite(idx)) return 'normal';
+            idx = Math.max(0, Math.min(SCORE_PALETTE_ORDER.length - 1, Math.round(idx)));
+            return SCORE_PALETTE_ORDER[idx];
+        }
+
+        function getCurrentScorePalette() {
+            return SCORE_PALETTE_MODES[currentScorePaletteMode] || SCORE_PALETTE_MODES.normal;
+        }
+
+        function updatePaletteSliderUi() {
+            var mode = getCurrentScorePalette();
+            if (scorePaletteSlider) {
+                scorePaletteSlider.value = String(paletteModeToIndex(currentScorePaletteMode));
+            }
+            if (paletteSliderCurrent) {
+                paletteSliderCurrent.textContent = mode.label;
+            }
+            if (paletteSliderTicks && paletteSliderTicks.length) {
+                paletteSliderTicks.forEach(function (tick) {
+                    var isActive = tick.getAttribute('data-mode') === currentScorePaletteMode;
+                    tick.classList.toggle('active', isActive);
+                });
+            }
+        }
+
+        function applyLegendPalette() {
+            var mode = getCurrentScorePalette();
+            if (scoreLegendBar) {
+                scoreLegendBar.style.background = mode.legendGradient;
+            }
+            if (scoreLegendLowLabel) {
+                scoreLegendLowLabel.textContent = mode.lowLabel;
+            }
+            if (scoreLegendHighLabel) {
+                scoreLegendHighLabel.textContent = mode.highLabel;
+            }
+        }
+
+        function setPaletteSliderCollapsed(collapsed, persist) {
+            paletteSliderCollapsed = !!collapsed;
+            if (paletteSliderUi) {
+                paletteSliderUi.classList.toggle('collapsed', paletteSliderCollapsed);
+            }
+            if (paletteSliderBody) {
+                paletteSliderBody.setAttribute('aria-hidden', paletteSliderCollapsed ? 'true' : 'false');
+            }
+            if (paletteSliderToggleBtn) {
+                paletteSliderToggleBtn.textContent = paletteSliderCollapsed ? 'Show color mode' : 'Hide color mode';
+                paletteSliderToggleBtn.setAttribute('aria-expanded', paletteSliderCollapsed ? 'false' : 'true');
+            }
+            if (persist) {
+                try {
+                    localStorage.setItem('scorePaletteCollapsed', paletteSliderCollapsed ? '1' : '0');
+                } catch (e) {}
+            }
+        }
+
+        function refreshScorePaletteRendering() {
+            applyLegendPalette();
+            if (layer_spt_ai_combined_1 && layer_spt_ai_combined_1.eachLayer) {
+                layer_spt_ai_combined_1.eachLayer(function (markerLayer) {
+                    if (!markerLayer || !markerLayer.feature || !markerLayer.setStyle) return;
+                    markerLayer.setStyle(style_spt_ai_combined_1_0(markerLayer.feature));
+                });
+            }
+            applyAreaAverageButtonStyles();
+        }
+
+        function setScorePaletteMode(modeKey, persist) {
+            var nextMode = SCORE_PALETTE_MODES[modeKey] ? modeKey : 'normal';
+            currentScorePaletteMode = nextMode;
+            updatePaletteSliderUi();
+            refreshScorePaletteRendering();
+            if (persist) {
+                try {
+                    localStorage.setItem('scorePaletteMode', currentScorePaletteMode);
+                } catch (e) {}
+            }
+        }
+
+        function clampScore(v) {
+            return Math.max(-5, Math.min(5, v));
+        }
+
+        function scoreToColor(score) {
+            var s = clampScore(score);
+            var t;
+            var start;
+            var end;
+            var palette = getCurrentScorePalette();
+            function mix(a, b, k) {
+                return Math.round(a + (b - a) * k);
+            }
+            if (s <= 0) {
+                t = (s + 5) / 5; // -5..0 => 0..1
+                start = palette.neg;
+                end = palette.mid;
+            } else {
+                t = s / 5; // 0..5 => 0..1
+                start = palette.mid;
+                end = palette.pos;
+            }
+            return 'rgb(' +
+                mix(start[0], end[0], t) + ',' +
+                mix(start[1], end[1], t) + ',' +
+                mix(start[2], end[2], t) +
+            ')';
+        }
+
+        // Area means from currently shown map dots:
+        // Leppävaara: n=31, Kivenlahti: n=13, Mankkaa: n=32 (folder 23 excluded)
+        var AREA_AVERAGES = {
+            'Leppävaara': 0.22580645161290322,
+            'Kivenlahti': -0.6153846153846154,
+            'Mankkaa': 0.9375
+        };
+
+        function rgbToTextColor(rgb) {
+            var m = String(rgb || '').match(/rgb\((\d+),(\d+),(\d+)\)/i);
+            if (!m) return '#fff';
+            var r = Number(m[1]), g = Number(m[2]), b = Number(m[3]);
+            var luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            return luminance > 150 ? '#111' : '#fff';
+        }
+
+        function applyAreaAverageButtonStyles() {
+            var pairs = [
+                ['Leppävaara', gotoLeppaBtn],
+                ['Kivenlahti', gotoKivenlahtiBtn],
+                ['Mankkaa', gotoMankkaaBtn]
+            ];
+            pairs.forEach(function(pair) {
+                var area = pair[0];
+                var btn = pair[1];
+                if (!btn) return;
+                var avg = Number(AREA_AVERAGES[area]);
+                if (!Number.isFinite(avg)) return;
+                var bg = scoreToColor(avg);
+                var avgTxt = (avg >= 0 ? '+' : '') + avg.toFixed(2);
+                btn.style.background = bg;
+                btn.style.color = rgbToTextColor(bg);
+                btn.style.borderColor = 'rgba(255,255,255,0.45)';
+                btn.textContent = area + ' ' + avgTxt;
+                btn.title = area + ' average AI_overall (all photos): ' + avgTxt;
+            });
+        }
+
+        function style_spt_ai_combined_1_0(feature) {
+            var raw = feature && feature.properties ? feature.properties['AI_overall'] : null;
+            var score = Number(raw);
+            if (!Number.isFinite(score)) {
+                score = 0;
+            }
+            var strokeColor = 'rgba(35,35,35,1.0)';
+            var strokeWeight = 1.4;
+            var strokeDashArray = '';
+            var markerRadius = 6.0;
+            return {
+                pane: 'pane_spt_ai_combined_1',
+                radius: markerRadius,
+                opacity: 1,
+                color: strokeColor,
+                dashArray: strokeDashArray,
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: strokeWeight,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: scoreToColor(score),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_spt_ai_combined_1');
+        map.getPane('pane_spt_ai_combined_1').style.zIndex = 401;
+        map.getPane('pane_spt_ai_combined_1').style['mix-blend-mode'] = 'normal';
+        var layer_spt_ai_combined_1 = new L.geoJson(json_spt_ai_combined_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_spt_ai_combined_1',
+            layerName: 'layer_spt_ai_combined_1',
+            pane: 'pane_spt_ai_combined_1',
+            onEachFeature: pop_leppavaara_photo_index_ai_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_spt_ai_combined_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_spt_ai_combined_1);
+        map.addLayer(layer_spt_ai_combined_1);
+
+        if (scorePaletteSlider) {
+            scorePaletteSlider.addEventListener('input', function () {
+                setScorePaletteMode(paletteIndexToMode(scorePaletteSlider.value), true);
+            });
+            scorePaletteSlider.addEventListener('change', function () {
+                setScorePaletteMode(paletteIndexToMode(scorePaletteSlider.value), true);
+            });
+        }
+        if (paletteSliderTicks && paletteSliderTicks.length) {
+            paletteSliderTicks.forEach(function (tick) {
+                tick.addEventListener('click', function () {
+                    var modeKey = tick.getAttribute('data-mode');
+                    setScorePaletteMode(modeKey, true);
+                });
+            });
+        }
+        if (paletteSliderToggleBtn) {
+            paletteSliderToggleBtn.addEventListener('click', function () {
+                setPaletteSliderCollapsed(!paletteSliderCollapsed, true);
+            });
+        }
+        if (basemapSelect) {
+            basemapSelect.addEventListener('change', function () {
+                setBasemapMode(basemapSelect.value, true);
+            });
+        }
+        setBasemapMode(currentBasemapMode, false);
+        setPaletteSliderCollapsed(paletteSliderCollapsed, false);
+        setScorePaletteMode(currentScorePaletteMode, false);
+
+                setBounds();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Local temp/log artifacts
+*.log
+.tmp/
+tmp/
+
+# Guardrail: do not commit external/private folders if copied here by mistake
+Group task 2/

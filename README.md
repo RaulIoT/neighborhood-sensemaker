@@ -20,6 +20,13 @@ These were copied from the parent `VS_Code/scripts` area into this repo.
 - `.env` and secret-like files are git-ignored via `.gitignore`.
 - `Group task 2` content was not imported into this repo.
 
+## Attribution and licenses
+
+- Project code in this repo is licensed under MIT (`LICENSE`).
+- Third-party and data/service notices are documented in `THIRD_PARTY_NOTICES.md`.
+- The in-map credits panel and attribution control include basemap/data/tool attributions.
+- If this site is deployed publicly, review provider terms for `tile.openstreetmap.org` and `data.osmbuildings.org` before scaling traffic.
+
 ## Setup
 
 ```bash

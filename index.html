@@ -722,9 +722,15 @@
             <div class="map-bottom-ui">
                 <button id="creditsToggleBtn" class="credits-btn" type="button">Show credits & privacy</button>
                 <div id="creditsPanel" class="credits-panel hidden">
-                    Basemap styles: OpenFreeMap Positron (gray), OpenStreetMap standard, OpenStreetMap + 3D buildings, and Positron (gray) + 3D buildings.<br>
-                    Basemap data: OpenStreetMap contributors (ODbL). 3D buildings: OSM Buildings (visible from zoom 15+).<br>
+                    <strong>Credits &amp; licenses</strong><br>
+                    Basemap data: &copy; OpenStreetMap contributors (ODbL).<br>
+                    Tiles/styles:<br>
+                    OpenFreeMap Positron (gray): &copy; OpenFreeMap, style by OpenMapTiles, data &copy; OpenStreetMap contributors.<br>
+                    OpenStreetMap Standard: &copy; OpenStreetMap contributors; tiles served by tile.openstreetmap.org (usage policy applies).<br>
+                    3D buildings rendering: OSM Buildings. Building footprints/data: &copy; OpenStreetMap contributors (ODbL).<br>
                     Web map stack: QGIS, qgis2web, Leaflet, MapLibre.<br>
+                    <br>
+                    <strong>Project / privacy</strong><br>
                     Project: SPT UE Course 2026.<br>
                     Photos and AI labels shown here are course project material. Reuse only with permission from the project owners.<br>
                     If publishing online, sanitize images first (faces/plates/addresses and EXIF location metadata).
@@ -792,7 +798,8 @@
             }
         } catch (e) {}
         var baseLayerPositron = L.maplibreGL({
-            style: 'https://tiles.openfreemap.org/styles/positron'
+            style: 'https://tiles.openfreemap.org/styles/positron',
+            attribution: '&copy; OpenFreeMap, style by OpenMapTiles, data &copy; OpenStreetMap contributors'
         });
         var baseLayerOsm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,

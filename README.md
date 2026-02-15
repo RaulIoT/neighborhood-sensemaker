@@ -22,9 +22,9 @@ These were copied from the parent `VS_Code/scripts` area into this repo.
 
 ## Attribution and licenses
 
-- Project code in this repo is licensed under MIT (`LICENSE`).
-- Third-party and data/service notices are documented in `THIRD_PARTY_NOTICES.md`.
-- The in-map credits panel and attribution control include basemap/data/tool attributions.
+- This project is released under the MIT License (see `LICENSE`).
+- Basemap data © OpenStreetMap contributors (ODbL). Tiles/styles and third-party components: see `THIRD_PARTY_NOTICES.md`.
+- Generated using QGIS + qgis2web.
 - If this site is deployed publicly, review provider terms for `tile.openstreetmap.org` and `data.osmbuildings.org` before scaling traffic.
 
 ## Setup

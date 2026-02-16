@@ -41,6 +41,11 @@
             padding: 10px 12px;
             box-sizing: border-box;
             font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            max-height: calc(100vh - 20px);
+            max-height: calc(100dvh - 20px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
         .map-labels-title {
             font-size: 14px;
@@ -194,6 +199,7 @@
         }
         .map-top-controls .map-feedback-block {
             margin-top: 0;
+            margin-bottom: 8px;
             border-top: 0;
             padding-top: 0;
         }
@@ -369,6 +375,9 @@
             flex-direction: column;
             gap: 6px;
             font-size: 12px;
+            max-height: min(78dvh, 820px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .map-feedback-form.hidden {
             display: none;
@@ -923,12 +932,9 @@
                     </div>
                 </div>
                 <div class="map-top-controls">
-                    <div class="map-ui-row">
-                        <button id="labelToggleBtn" type="button">Show labels</button>
-                    </div>
                     <div class="map-feedback-block">
                         <button id="feedbackToggleBtn" class="map-feedback-toggle-btn" type="button" aria-expanded="false">
-                            ✨ Please give opinion of this AI sentiment - help thesis student ✨
+                            * Please give opinion of this Al sentiment - help thesis student *
                         </button>
                         <div id="feedbackForm" class="map-feedback-form hidden">
                             <iframe
@@ -939,6 +945,9 @@
                                 referrerpolicy="no-referrer-when-downgrade"></iframe>
                             <div id="googleFormHint" class="map-feedback-status error" aria-live="polite"></div>
                         </div>
+                    </div>
+                    <div class="map-ui-row">
+                        <button id="labelToggleBtn" type="button">Show labels</button>
                     </div>
                     <div id="paletteSliderUi" class="palette-slider-ui" aria-label="Score color mode control">
                         <button id="paletteSliderToggleBtn" class="palette-toggle-btn" type="button" aria-expanded="true">Hide color mode</button>

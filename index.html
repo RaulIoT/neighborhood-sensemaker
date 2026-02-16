@@ -31,12 +31,15 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
+            width: min(92vw, 460px);
+            min-width: min(320px, 92vw);
             max-width: min(92vw, 460px);
             background: rgba(0, 0, 0, 0.72);
             color: #fff;
             border: 1px solid #2f2f2f;
             border-radius: 10px;
             padding: 10px 12px;
+            box-sizing: border-box;
             font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         }
         .map-labels-title {
@@ -179,7 +182,7 @@
             margin-top: 8px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 0;
         }
         .map-top-controls .map-ui-row {
             margin-top: 0;
@@ -188,6 +191,14 @@
         .map-top-controls .map-ui-row button {
             width: 100%;
             min-width: 0;
+        }
+        .map-top-controls .map-feedback-block {
+            margin-top: 0;
+            border-top: 0;
+            padding-top: 0;
+        }
+        #paletteSliderUi {
+            margin-top: 8px;
         }
         .palette-slider-ui {
             position: static;
@@ -216,15 +227,17 @@
             background: #171717;
         }
         .palette-slider-body {
-            max-height: 300px;
+            max-height: min(74vh, 720px);
             opacity: 1;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             transition: max-height 0.22s ease, opacity 0.2s ease;
         }
         .palette-slider-ui.collapsed .palette-slider-body {
             max-height: 0;
             opacity: 0;
             pointer-events: none;
+            overflow: hidden;
         }
         .palette-slider-current {
             font-size: 12px;
@@ -290,6 +303,133 @@
             padding: 4px 6px;
             font-size: 12px;
             width: 100%;
+        }
+        .layer-toggle-row {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .layer-toggle-row-title {
+            font-size: 11px;
+            color: #d6d6d6;
+        }
+        .layer-toggle-row-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .layer-toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+            user-select: none;
+        }
+        .layer-toggle-item input[type="checkbox"] {
+            margin: 0;
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+        #mapillaryDataToggle {
+            accent-color: #ffd84d;
+        }
+        #groupPhotosToggle {
+            accent-color: #9ecbff;
+        }
+        .map-feedback-block {
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.16);
+            padding-top: 10px;
+        }
+        .map-feedback-block.hidden {
+            display: none;
+        }
+        .map-feedback-toggle-btn {
+            background: #0f0f0f;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 5px 8px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .map-feedback-toggle-btn:hover {
+            background: #171717;
+        }
+        .map-feedback-form {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+        }
+        .map-feedback-form.hidden {
+            display: none;
+        }
+        .map-feedback-form label {
+            color: #d6d6d6;
+            font-size: 11px;
+        }
+        .map-feedback-rating-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .map-feedback-rating-row input[type="range"] {
+            flex: 1 1 auto;
+            accent-color: #8e8e8e;
+        }
+        .map-feedback-rating-value {
+            width: 22px;
+            text-align: center;
+            color: #fff;
+            font-weight: 700;
+        }
+        .map-feedback-form textarea {
+            background: #0f0f0f;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 6px 8px;
+            min-height: 72px;
+            resize: vertical;
+            font-size: 12px;
+            font-family: inherit;
+        }
+        .map-feedback-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .map-feedback-actions button {
+            background: #0f0f0f;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .map-feedback-actions button:hover {
+            background: #171717;
+        }
+        .map-feedback-status {
+            min-height: 16px;
+            color: #d2d2d2;
+            font-size: 11px;
+        }
+        .map-feedback-status.error {
+            color: #ff9b9b;
+        }
+        .map-feedback-honeypot {
+            display: none;
         }
         .map-ui-row {
             display: flex;
@@ -377,6 +517,129 @@
         }
         .map-compass.hidden {
             display: none;
+        }
+        .map-shadow-clock {
+            position: static;
+            margin-top: 8px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.78);
+            color: #fff;
+            border: 1px solid #3a3a3a;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            pointer-events: auto;
+        }
+        .map-shadow-clock.hidden {
+            display: none;
+        }
+        .map-shadow-clock-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 11px;
+            color: #d8d8d8;
+        }
+        .map-shadow-now-btn {
+            background: #171717;
+            color: #fff;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 11px;
+            white-space: nowrap;
+            flex: 0 0 auto;
+            cursor: pointer;
+        }
+        .map-shadow-now-btn:hover {
+            background: #222;
+        }
+        .map-shadow-time {
+            font-size: 21px;
+            font-weight: 700;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
+        }
+        #shadowTimeSlider {
+            width: 100%;
+            box-sizing: border-box;
+            accent-color: #ffd84d;
+            cursor: pointer;
+        }
+        .map-shadow-week-wrap {
+            margin-top: 6px;
+        }
+        .map-shadow-week-btn {
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: #171717;
+            color: #fff;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .map-shadow-week-btn:hover {
+            background: #222;
+        }
+        .map-shadow-week-btn span:last-child {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+        .map-shadow-week-panel {
+            margin-top: 6px;
+            box-sizing: border-box;
+            padding: 6px 7px;
+            border: 1px solid #3a3a3a;
+            border-radius: 7px;
+            background: rgba(8, 8, 8, 0.72);
+        }
+        .map-shadow-week-panel.hidden {
+            display: none;
+        }
+        .map-shadow-week-meta {
+            font-size: 11px;
+            color: #f0f0f0;
+            margin-bottom: 6px;
+            font-variant-numeric: tabular-nums;
+        }
+        #shadowWeekSlider {
+            width: 100%;
+            box-sizing: border-box;
+            accent-color: #ffd84d;
+            cursor: pointer;
+        }
+        .map-shadow-live {
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #f0f0f0;
+            user-select: none;
+        }
+        .map-shadow-live input[type="checkbox"] {
+            accent-color: #ffd84d;
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .map-shadow-note {
+            margin-top: 4px;
+            font-size: 10px;
+            color: #bbbbbb;
         }
         .map-compass-face {
             position: relative;
@@ -534,6 +797,7 @@
         }
         @media (min-width: 1024px) {
             .map-top-ui {
+                width: min(78vw, 700px);
                 max-width: min(78vw, 700px);
                 padding: 12px 14px;
             }
@@ -560,6 +824,7 @@
         }
         @media (min-width: 1440px) {
             .map-top-ui {
+                width: min(70vw, 860px);
                 max-width: min(70vw, 860px);
             }
             .leaflet-popup-content {
@@ -583,6 +848,7 @@
                 max-height: min(62vh, 420px);
             }
             .map-top-ui {
+                width: min(95vw, 760px);
                 max-width: min(95vw, 760px);
             }
         }
@@ -682,6 +948,35 @@
                     <div class="map-ui-row">
                         <button id="labelToggleBtn" type="button">Show labels</button>
                     </div>
+                    <div class="map-feedback-block">
+                        <button id="feedbackToggleBtn" class="map-feedback-toggle-btn" type="button" aria-expanded="false">
+                            ✨ Please give opinion of this AI sentiment - help thesis student :) ✨
+                        </button>
+                        <form id="feedbackForm" class="map-feedback-form hidden" name="ai_sentiment_poll" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">
+                            <input type="hidden" name="form-name" value="ai_sentiment_poll">
+                            <p class="map-feedback-honeypot">
+                                <label>Do not fill this field: <input name="bot-field"></label>
+                            </p>
+                            <label for="feedbackRating">Rating (0-10)</label>
+                            <div class="map-feedback-rating-row">
+                                <input id="feedbackRating" name="rating_0_to_10" type="range" min="0" max="10" step="1" value="0">
+                                <output id="feedbackRatingValue" class="map-feedback-rating-value" for="feedbackRating">0</output>
+                            </div>
+                            <label for="feedbackOpinion">Open opinion</label>
+                            <textarea id="feedbackOpinion" name="opinion" placeholder="What do you agree/disagree with in the AI sentiment?" maxlength="800" required></textarea>
+                            <input id="feedbackMapHash" type="hidden" name="map_hash">
+                            <input id="feedbackMapCenterLat" type="hidden" name="map_center_lat">
+                            <input id="feedbackMapCenterLon" type="hidden" name="map_center_lon">
+                            <input id="feedbackMapZoom" type="hidden" name="map_zoom">
+                            <input id="feedbackSelectedPlace" type="hidden" name="selected_place">
+                            <input id="feedbackSubmittedAt" type="hidden" name="submitted_at_utc">
+                            <input id="feedbackSiteOrigin" type="hidden" name="site_origin">
+                            <div class="map-feedback-actions">
+                                <button id="feedbackSubmitBtn" type="submit">Send</button>
+                            </div>
+                            <div id="feedbackStatus" class="map-feedback-status" aria-live="polite"></div>
+                        </form>
+                    </div>
                     <div id="paletteSliderUi" class="palette-slider-ui" aria-label="Score color mode control">
                         <button id="paletteSliderToggleBtn" class="palette-toggle-btn" type="button" aria-expanded="true">Hide color mode</button>
                         <div id="paletteSliderBody" class="palette-slider-body">
@@ -705,6 +1000,49 @@
                                     <option value="osm3d">OpenStreetMap + 3D buildings</option>
                                     <option value="positron3dgray">Positron (gray) + 3D buildings</option>
                                 </select>
+                            </div>
+                            <div class="basemap-mode-row">
+                                <label for="mapillaryViewSelect">Mapillary overlay</label>
+                                <select id="mapillaryViewSelect" aria-label="Mapillary overlay style">
+                                    <option value="dots">Colored dots</option>
+                                    <option value="heat">Road bands</option>
+                                </select>
+                            </div>
+                            <div class="layer-toggle-row" aria-label="Photo and Mapillary layer visibility">
+                                <div class="layer-toggle-row-title">Show layers</div>
+                                <div class="layer-toggle-row-controls">
+                                    <label class="layer-toggle-item" for="groupPhotosToggle">
+                                        <input id="groupPhotosToggle" type="checkbox" checked>
+                                        <span>Group photos</span>
+                                    </label>
+                                    <label class="layer-toggle-item" for="mapillaryDataToggle">
+                                        <input id="mapillaryDataToggle" type="checkbox" checked>
+                                        <span>Mapillary photos</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="shadowClockControl" class="map-shadow-clock hidden" aria-hidden="true" aria-label="3D shadow time control">
+                                <div class="map-shadow-clock-head">
+                                    <span>3D shadow time</span>
+                                    <button id="shadowNowBtn" class="map-shadow-now-btn" type="button">Now</button>
+                                </div>
+                                <div id="shadowTimeLabel" class="map-shadow-time">12:00</div>
+                                <input id="shadowTimeSlider" type="range" min="0" max="1439" step="5" value="720" aria-label="Shadow time of day">
+                                <div class="map-shadow-week-wrap">
+                                    <button id="shadowWeekToggleBtn" class="map-shadow-week-btn" type="button" aria-expanded="false">
+                                        <span>Week number</span>
+                                        <span id="shadowWeekLabel">W01</span>
+                                    </button>
+                                    <div id="shadowWeekPanel" class="map-shadow-week-panel hidden" aria-hidden="true">
+                                        <div id="shadowWeekMeta" class="map-shadow-week-meta">Week 01</div>
+                                        <input id="shadowWeekSlider" type="range" min="1" max="53" step="1" value="1" aria-label="Shadow ISO week number">
+                                    </div>
+                                </div>
+                                <label class="map-shadow-live" for="shadowLiveToggle">
+                                    <input id="shadowLiveToggle" type="checkbox">
+                                    <span>Live time</span>
+                                </label>
+                                <div class="map-shadow-note">Local timezone. Drag slider to test different sun/shadow times.</div>
                             </div>
                         </div>
                     </div>
@@ -748,6 +1086,7 @@
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
+        <script src="js/leaflet-heat.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
         <script src="js/leaflet.pattern.js"></script>
@@ -761,6 +1100,7 @@
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js"></script>
         <script src="data/spt_ai_combined_1.js"></script>
+        <script src="data/mapillary_downloaded_points.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
@@ -822,6 +1162,222 @@
             var styleKey = OSM_BUILDINGS_STYLES[modeKey] ? modeKey : 'osm3d';
             baseLayerOsmBuildings3d.style(OSM_BUILDINGS_STYLES[styleKey]);
         }
+
+        function getIsoWeekInfo(dateValue) {
+            var d = new Date(dateValue && dateValue.getTime ? dateValue.getTime() : dateValue);
+            if (!Number.isFinite(d.getTime())) {
+                d = new Date();
+            }
+            d.setHours(12, 0, 0, 0);
+            var weekday = d.getDay();
+            weekday = weekday === 0 ? 7 : weekday;
+            d.setDate(d.getDate() + 4 - weekday);
+            var isoYear = d.getFullYear();
+            var jan4 = new Date(isoYear, 0, 4, 12, 0, 0, 0);
+            var jan4Weekday = jan4.getDay();
+            jan4Weekday = jan4Weekday === 0 ? 7 : jan4Weekday;
+            var week1Monday = new Date(jan4);
+            week1Monday.setDate(jan4.getDate() - jan4Weekday + 1);
+            var week = Math.floor((d - week1Monday) / 604800000) + 1;
+            return {
+                isoYear: isoYear,
+                week: week,
+                weekday: weekday
+            };
+        }
+
+        function getIsoWeeksInYear(isoYear) {
+            var y = Number(isoYear);
+            if (!Number.isFinite(y)) y = new Date().getFullYear();
+            y = Math.round(y);
+            return getIsoWeekInfo(new Date(y, 11, 28, 12, 0, 0, 0)).week;
+        }
+
+        function isoWeekToDate(isoYear, week, weekday) {
+            var y = Number(isoYear);
+            if (!Number.isFinite(y)) y = new Date().getFullYear();
+            y = Math.round(y);
+            var maxWeek = getIsoWeeksInYear(y);
+            var w = Number(week);
+            if (!Number.isFinite(w)) w = 1;
+            w = Math.max(1, Math.min(maxWeek, Math.round(w)));
+            var wd = Number(weekday);
+            if (!Number.isFinite(wd)) wd = 1;
+            wd = Math.max(1, Math.min(7, Math.round(wd)));
+            var jan4 = new Date(y, 0, 4, 12, 0, 0, 0);
+            var jan4Weekday = jan4.getDay();
+            jan4Weekday = jan4Weekday === 0 ? 7 : jan4Weekday;
+            var week1Monday = new Date(jan4);
+            week1Monday.setDate(jan4.getDate() - jan4Weekday + 1);
+            var target = new Date(week1Monday);
+            target.setDate(week1Monday.getDate() + (w - 1) * 7 + (wd - 1));
+            return target;
+        }
+
+        function getWeekdayShortName(weekday) {
+            var names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            var idx = Number(weekday) - 1;
+            if (!Number.isFinite(idx) || idx < 0 || idx >= names.length) return names[0];
+            return names[idx];
+        }
+
+        function getCurrentIsoSnapshot() {
+            var now = new Date();
+            var iso = getIsoWeekInfo(now);
+            return {
+                isoYear: iso.isoYear,
+                week: iso.week,
+                weekday: iso.weekday,
+                minutes: now.getHours() * 60 + now.getMinutes()
+            };
+        }
+
+        var currentIsoSnapshot = getCurrentIsoSnapshot();
+        var shadowClockMinutes = currentIsoSnapshot.minutes;
+        var shadowClockLive = true;
+        var shadowClockTimer = null;
+        var shadowClockIsoYear = currentIsoSnapshot.isoYear;
+        var shadowClockWeek = currentIsoSnapshot.week;
+        var shadowClockWeekday = currentIsoSnapshot.weekday;
+        var shadowWeekPanelOpen = false;
+
+        function getLocalNowMinutes() {
+            var now = new Date();
+            return now.getHours() * 60 + now.getMinutes();
+        }
+
+        function formatClockMinutes(totalMinutes) {
+            var m = Number(totalMinutes);
+            if (!Number.isFinite(m)) m = 0;
+            m = Math.max(0, Math.min(1439, Math.round(m)));
+            var hh = Math.floor(m / 60);
+            var mm = m % 60;
+            return String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+        }
+
+        function formatIsoWeek(weekNumber) {
+            var w = Number(weekNumber);
+            if (!Number.isFinite(w)) w = 1;
+            w = Math.max(1, Math.round(w));
+            return 'W' + String(w).padStart(2, '0');
+        }
+
+        function setShadowWeekPanelOpen(opened) {
+            shadowWeekPanelOpen = !!opened;
+            if (shadowWeekPanel) {
+                shadowWeekPanel.classList.toggle('hidden', !shadowWeekPanelOpen);
+                shadowWeekPanel.setAttribute('aria-hidden', shadowWeekPanelOpen ? 'false' : 'true');
+            }
+            if (shadowWeekToggleBtn) {
+                shadowWeekToggleBtn.setAttribute('aria-expanded', shadowWeekPanelOpen ? 'true' : 'false');
+            }
+        }
+
+        function syncShadowDateFromNow() {
+            var now = new Date();
+            shadowClockMinutes = now.getHours() * 60 + now.getMinutes();
+            var iso = getIsoWeekInfo(now);
+            shadowClockIsoYear = iso.isoYear;
+            shadowClockWeek = iso.week;
+            shadowClockWeekday = iso.weekday;
+        }
+
+        function applyShadowClockTime(persist) {
+            if (!Number.isFinite(shadowClockMinutes)) {
+                shadowClockMinutes = getLocalNowMinutes();
+            }
+            shadowClockMinutes = Math.max(0, Math.min(1439, Math.round(shadowClockMinutes)));
+            if (!Number.isFinite(shadowClockIsoYear)) {
+                shadowClockIsoYear = getCurrentIsoSnapshot().isoYear;
+            }
+            shadowClockIsoYear = Math.max(1970, Math.min(3000, Math.round(shadowClockIsoYear)));
+            var maxWeek = getIsoWeeksInYear(shadowClockIsoYear);
+            if (!Number.isFinite(shadowClockWeek)) {
+                shadowClockWeek = 1;
+            }
+            shadowClockWeek = Math.max(1, Math.min(maxWeek, Math.round(shadowClockWeek)));
+            if (!Number.isFinite(shadowClockWeekday)) {
+                shadowClockWeekday = getCurrentIsoSnapshot().weekday;
+            }
+            shadowClockWeekday = Math.max(1, Math.min(7, Math.round(shadowClockWeekday)));
+            if (shadowTimeSlider) {
+                shadowTimeSlider.value = String(shadowClockMinutes);
+            }
+            if (shadowTimeLabel) {
+                shadowTimeLabel.textContent = formatClockMinutes(shadowClockMinutes);
+            }
+            if (shadowWeekSlider) {
+                shadowWeekSlider.max = String(maxWeek);
+                shadowWeekSlider.value = String(shadowClockWeek);
+            }
+            if (shadowWeekLabel) {
+                shadowWeekLabel.textContent = formatIsoWeek(shadowClockWeek);
+            }
+            if (shadowWeekMeta) {
+                shadowWeekMeta.textContent = 'Week ' + String(shadowClockWeek).padStart(2, '0') +
+                    ' (' + getWeekdayShortName(shadowClockWeekday) + ')';
+            }
+            if (baseLayerOsmBuildings3d && typeof baseLayerOsmBuildings3d.date === 'function') {
+                var d = isoWeekToDate(shadowClockIsoYear, shadowClockWeek, shadowClockWeekday);
+                d.setHours(Math.floor(shadowClockMinutes / 60), shadowClockMinutes % 60, 0, 0);
+                baseLayerOsmBuildings3d.date(d);
+            }
+            if (persist) {
+                try {
+                    localStorage.setItem('shadowClockMinutes', String(shadowClockMinutes));
+                    localStorage.setItem('shadowClockIsoYear', String(shadowClockIsoYear));
+                    localStorage.setItem('shadowClockWeek', String(shadowClockWeek));
+                    localStorage.setItem('shadowClockWeekday', String(shadowClockWeekday));
+                } catch (e) {}
+            }
+        }
+
+        function stopShadowClockTimer() {
+            if (shadowClockTimer) {
+                clearInterval(shadowClockTimer);
+                shadowClockTimer = null;
+            }
+        }
+
+        function startShadowClockTimer() {
+            stopShadowClockTimer();
+            shadowClockTimer = setInterval(function () {
+                if (!shadowClockLive) return;
+                syncShadowDateFromNow();
+                applyShadowClockTime(false);
+            }, 30000);
+        }
+
+        function setShadowClockLiveMode(enabled, persist) {
+            shadowClockLive = !!enabled;
+            if (shadowLiveToggle) {
+                shadowLiveToggle.checked = shadowClockLive;
+            }
+            if (shadowClockLive) {
+                syncShadowDateFromNow();
+                applyShadowClockTime(persist);
+                startShadowClockTimer();
+            } else {
+                stopShadowClockTimer();
+                applyShadowClockTime(persist);
+            }
+            if (persist) {
+                try {
+                    localStorage.setItem('shadowClockLive', shadowClockLive ? '1' : '0');
+                } catch (e) {}
+            }
+        }
+
+        function updateShadowClockVisibility() {
+            if (!shadowClockControl) return;
+            var visible = is3dBasemapMode(currentBasemapMode) && !!baseLayerOsmBuildings3d;
+            shadowClockControl.classList.toggle('hidden', !visible);
+            shadowClockControl.setAttribute('aria-hidden', visible ? 'false' : 'true');
+            if (!visible) {
+                setShadowWeekPanelOpen(false);
+            }
+        }
+
         if (usesOsmBasemap(currentBasemapMode)) {
             baseLayerOsm.addTo(map);
         } else {
@@ -831,6 +1387,7 @@
             if (baseLayerOsmBuildings3d) {
                 apply3dBuildingStyle(currentBasemapMode);
                 map.addLayer(baseLayerOsmBuildings3d);
+                applyShadowClockTime(false);
                 if (map.getZoom() < OSM_BUILDINGS_MIN_ZOOM) {
                     map.setZoom(OSM_BUILDINGS_MIN_ZOOM);
                 }
@@ -839,10 +1396,12 @@
             }
         }
         function updateCompassVisibility() {
-            if (!mapCompass) return;
             var visible = is3dBasemapMode(currentBasemapMode);
-            mapCompass.classList.toggle('hidden', !visible);
-            mapCompass.setAttribute('aria-hidden', visible ? 'false' : 'true');
+            if (mapCompass) {
+                mapCompass.classList.toggle('hidden', !visible);
+                mapCompass.setAttribute('aria-hidden', visible ? 'false' : 'true');
+            }
+            updateShadowClockVisibility();
         }
         function setBasemapMode(modeKey, persist) {
             var nextMode = BASEMAP_MODES[modeKey] ? modeKey : 'positron';
@@ -861,6 +1420,7 @@
                 if (baseLayerOsmBuildings3d) {
                     apply3dBuildingStyle(currentBasemapMode);
                     map.addLayer(baseLayerOsmBuildings3d);
+                    applyShadowClockTime(false);
                     if (map.getZoom() < OSM_BUILDINGS_MIN_ZOOM) {
                         map.setZoom(OSM_BUILDINGS_MIN_ZOOM);
                     }
@@ -945,8 +1505,17 @@
         }).addTo(map);
         var labelToggleBtn = document.getElementById('labelToggleBtn');
         var mapLabelsBlock = document.getElementById('mapLabelsBlock');
+        var labelsVisible = false;
+        var feedbackBlock = document.querySelector('.map-top-controls .map-feedback-block');
+        function updateFeedbackBlockVisibility() {
+            if (!feedbackBlock) return;
+            var shouldShow = labelsVisible || !paletteSliderCollapsed;
+            feedbackBlock.classList.toggle('hidden', !shouldShow);
+            if (!shouldShow) {
+                setFeedbackFormOpen(false);
+            }
+        }
         if (labelToggleBtn && mapLabelsBlock) {
-            var labelsVisible = false;
             labelToggleBtn.addEventListener('click', function () {
                 labelsVisible = !labelsVisible;
                 if (labelsVisible) {
@@ -956,6 +1525,7 @@
                     mapLabelsBlock.classList.add('hidden');
                     labelToggleBtn.textContent = 'Show labels';
                 }
+                updateFeedbackBlockVisibility();
             });
         }
         var gotoLeppaBtn = document.getElementById('gotoLeppaBtn');
@@ -986,7 +1556,34 @@
         var paletteSliderCurrent = document.getElementById('paletteSliderCurrent');
         var paletteSliderTicks = document.querySelectorAll('.palette-slider-tick');
         var basemapSelect = document.getElementById('basemapSelect');
+        var mapillaryViewSelect = document.getElementById('mapillaryViewSelect');
+        var groupPhotosToggle = document.getElementById('groupPhotosToggle');
+        var mapillaryDataToggle = document.getElementById('mapillaryDataToggle');
+        var feedbackToggleBtn = document.getElementById('feedbackToggleBtn');
+        var feedbackForm = document.getElementById('feedbackForm');
+        var feedbackRating = document.getElementById('feedbackRating');
+        var feedbackRatingValue = document.getElementById('feedbackRatingValue');
+        var feedbackOpinion = document.getElementById('feedbackOpinion');
+        var feedbackSubmitBtn = document.getElementById('feedbackSubmitBtn');
+        var feedbackStatus = document.getElementById('feedbackStatus');
+        var feedbackMapHash = document.getElementById('feedbackMapHash');
+        var feedbackMapCenterLat = document.getElementById('feedbackMapCenterLat');
+        var feedbackMapCenterLon = document.getElementById('feedbackMapCenterLon');
+        var feedbackMapZoom = document.getElementById('feedbackMapZoom');
+        var feedbackSelectedPlace = document.getElementById('feedbackSelectedPlace');
+        var feedbackSubmittedAt = document.getElementById('feedbackSubmittedAt');
+        var feedbackSiteOrigin = document.getElementById('feedbackSiteOrigin');
         var mapCompass = document.getElementById('mapCompass');
+        var shadowClockControl = document.getElementById('shadowClockControl');
+        var shadowTimeSlider = document.getElementById('shadowTimeSlider');
+        var shadowTimeLabel = document.getElementById('shadowTimeLabel');
+        var shadowWeekToggleBtn = document.getElementById('shadowWeekToggleBtn');
+        var shadowWeekPanel = document.getElementById('shadowWeekPanel');
+        var shadowWeekLabel = document.getElementById('shadowWeekLabel');
+        var shadowWeekMeta = document.getElementById('shadowWeekMeta');
+        var shadowWeekSlider = document.getElementById('shadowWeekSlider');
+        var shadowNowBtn = document.getElementById('shadowNowBtn');
+        var shadowLiveToggle = document.getElementById('shadowLiveToggle');
         var creditsToggleBtn = document.getElementById('creditsToggleBtn');
         var creditsPanel = document.getElementById('creditsPanel');
         if (creditsToggleBtn && creditsPanel) {
@@ -995,6 +1592,139 @@
                 creditsToggleBtn.textContent = hidden ? 'Show credits & privacy' : 'Hide credits & privacy';
             });
         }
+        var feedbackFormOpen = false;
+        var latestSelectedPlaceLabel = '';
+        function setFeedbackStatus(message, isError) {
+            if (!feedbackStatus) return;
+            feedbackStatus.textContent = message || '';
+            feedbackStatus.classList.toggle('error', !!isError);
+        }
+        function setFeedbackFormOpen(open) {
+            feedbackFormOpen = !!open;
+            if (feedbackForm) {
+                feedbackForm.classList.toggle('hidden', !feedbackFormOpen);
+            }
+            if (feedbackToggleBtn) {
+                feedbackToggleBtn.setAttribute('aria-expanded', feedbackFormOpen ? 'true' : 'false');
+            }
+        }
+        function feedbackRatingToColor(value) {
+            var v = Number(value);
+            if (!Number.isFinite(v)) v = 0;
+            v = Math.max(0, Math.min(10, v));
+            var t = v / 10;
+            var sat = Math.round(t * 100);
+            var light = Math.round(62 - (t * 14));
+            return 'hsl(132,' + sat + '%,' + light + '%)';
+        }
+        function updateFeedbackRatingDisplay() {
+            if (!feedbackRating || !feedbackRatingValue) return;
+            var val = Number(feedbackRating.value);
+            if (!Number.isFinite(val)) val = 0;
+            val = Math.max(0, Math.min(10, Math.round(val)));
+            feedbackRatingValue.textContent = String(val);
+            var color = feedbackRatingToColor(val);
+            feedbackRating.style.accentColor = color;
+            feedbackRatingValue.style.color = color;
+        }
+        function updateFeedbackContextFields() {
+            if (feedbackMapHash) {
+                feedbackMapHash.value = String(window.location.hash || '');
+            }
+            var center = map.getCenter ? map.getCenter() : null;
+            if (center) {
+                if (feedbackMapCenterLat) feedbackMapCenterLat.value = Number(center.lat).toFixed(6);
+                if (feedbackMapCenterLon) feedbackMapCenterLon.value = Number(center.lng).toFixed(6);
+            }
+            if (feedbackMapZoom && map.getZoom) {
+                feedbackMapZoom.value = String(map.getZoom());
+            }
+            if (feedbackSelectedPlace) {
+                feedbackSelectedPlace.value = latestSelectedPlaceLabel || '';
+            }
+            if (feedbackSubmittedAt) {
+                feedbackSubmittedAt.value = new Date().toISOString();
+            }
+            if (feedbackSiteOrigin) {
+                feedbackSiteOrigin.value = String(window.location.origin || '');
+            }
+        }
+        function isLocalPreviewMode() {
+            var host = String(window.location.hostname || '').toLowerCase();
+            var protocol = String(window.location.protocol || '').toLowerCase();
+            return protocol === 'file:' || host === 'localhost' || host === '127.0.0.1';
+        }
+        function encodeNetlifyForm(dataObj) {
+            var pairs = [];
+            Object.keys(dataObj || {}).forEach(function (key) {
+                var value = dataObj[key];
+                if (value === undefined || value === null) value = '';
+                pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(String(value)));
+            });
+            return pairs.join('&');
+        }
+        function getFeedbackPayloadObject() {
+            if (!feedbackForm) return {};
+            updateFeedbackContextFields();
+            var obj = {};
+            var fd = new FormData(feedbackForm);
+            fd.forEach(function (val, key) {
+                if (key === 'bot-field') return;
+                obj[key] = String(val);
+            });
+            obj['form-name'] = 'ai_sentiment_poll';
+            return obj;
+        }
+        if (feedbackToggleBtn) {
+            feedbackToggleBtn.addEventListener('click', function () {
+                setFeedbackFormOpen(!feedbackFormOpen);
+                if (feedbackFormOpen && feedbackOpinion) {
+                    feedbackOpinion.focus();
+                }
+            });
+        }
+        if (feedbackRating) {
+            feedbackRating.addEventListener('input', updateFeedbackRatingDisplay);
+            feedbackRating.addEventListener('change', updateFeedbackRatingDisplay);
+        }
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                setFeedbackStatus('', false);
+                var payload = getFeedbackPayloadObject();
+                if (!payload.opinion || !String(payload.opinion).trim()) {
+                    setFeedbackStatus('Please write a short opinion before sending.', true);
+                    if (feedbackOpinion) feedbackOpinion.focus();
+                    return;
+                }
+                if (isLocalPreviewMode()) {
+                    setFeedbackStatus('Local preview mode: deploy to Netlify to submit this poll.', true);
+                    return;
+                }
+                if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = true;
+                var body = encodeNetlifyForm(payload);
+                fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: body
+                }).then(function (response) {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    feedbackForm.reset();
+                    updateFeedbackRatingDisplay();
+                    setFeedbackStatus('Thanks. Feedback sent to Netlify.', false);
+                    setFeedbackFormOpen(false);
+                }).catch(function () {
+                    setFeedbackStatus('Could not send to Netlify Forms. Check site deploy and forms setup.', true);
+                }).finally(function () {
+                    if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = false;
+                });
+            });
+        }
+        setFeedbackFormOpen(false);
+        updateFeedbackRatingDisplay();
         var photoLightbox = document.getElementById('photoLightbox');
         var photoLightboxImg = document.getElementById('photoLightboxImg');
         var photoZoomInBtn = document.getElementById('photoZoomInBtn');
@@ -1177,6 +1907,7 @@
 				layer.on('popupopen', function(e) {
 					addClassToPopupIfMedia(content, e.popup);
                 bindPopupImageInteractions(e.popup);
+                latestSelectedPlaceLabel = nameVal || '';
                 var baseMarkerStyle = getBaseMarkerStyle();
                 var openRadius = (baseMarkerStyle.radius || 6) * 1.3;
                 layer.setStyle({
@@ -1205,10 +1936,10 @@
         var SCORE_PALETTE_MODES = {
             normal: {
                 label: 'Trichromacy',
-                neg: [215, 48, 39],
-                mid: [254, 224, 139],
-                pos: [26, 152, 80],
-                legendGradient: 'linear-gradient(90deg, #d73027 0%, #f46d43 25%, #fee08b 50%, #66bd63 75%, #1a9850 100%)',
+                neg: [165, 15, 21],
+                mid: [255, 235, 170],
+                pos: [0, 104, 55],
+                legendGradient: 'linear-gradient(90deg, #a50f15 0%, #de2d26 25%, #ffebb0 50%, #31a354 75%, #006837 100%)',
                 lowLabel: 'Red = lower score',
                 highLabel: 'Green = higher score'
             },
@@ -1243,12 +1974,50 @@
         var SCORE_PALETTE_ORDER = ['normal', 'redgreen', 'blueyellow', 'mono'];
         var currentScorePaletteMode = 'normal';
         var paletteSliderCollapsed = false;
+        var currentMapillaryView = 'dots';
+        var showGroupPhotos = true;
+        var showMapillaryData = true;
         try {
             var savedScorePaletteMode = localStorage.getItem('scorePaletteMode');
             if (savedScorePaletteMode && SCORE_PALETTE_MODES[savedScorePaletteMode]) {
                 currentScorePaletteMode = savedScorePaletteMode;
             }
             paletteSliderCollapsed = localStorage.getItem('scorePaletteCollapsed') === '1';
+            var savedMapillaryView = localStorage.getItem('mapillaryOverlayMode');
+            if (savedMapillaryView === 'dots' || savedMapillaryView === 'heat') {
+                currentMapillaryView = savedMapillaryView;
+            }
+            var savedGroupPhotos = localStorage.getItem('showGroupPhotos');
+            if (savedGroupPhotos === '0' || savedGroupPhotos === '1') {
+                showGroupPhotos = savedGroupPhotos === '1';
+            }
+            var savedMapillaryData = localStorage.getItem('showMapillaryData');
+            if (savedMapillaryData === '0' || savedMapillaryData === '1') {
+                showMapillaryData = savedMapillaryData === '1';
+            }
+            var savedShadowClockMinutes = Number(localStorage.getItem('shadowClockMinutes'));
+            if (Number.isFinite(savedShadowClockMinutes)) {
+                shadowClockMinutes = Math.max(0, Math.min(1439, Math.round(savedShadowClockMinutes)));
+            } else {
+                shadowClockMinutes = getLocalNowMinutes();
+            }
+            var savedShadowClockIsoYear = Number(localStorage.getItem('shadowClockIsoYear'));
+            if (Number.isFinite(savedShadowClockIsoYear)) {
+                shadowClockIsoYear = Math.max(1970, Math.min(3000, Math.round(savedShadowClockIsoYear)));
+            }
+            var savedShadowClockWeekday = Number(localStorage.getItem('shadowClockWeekday'));
+            if (Number.isFinite(savedShadowClockWeekday)) {
+                shadowClockWeekday = Math.max(1, Math.min(7, Math.round(savedShadowClockWeekday)));
+            }
+            var savedShadowClockWeek = Number(localStorage.getItem('shadowClockWeek'));
+            if (Number.isFinite(savedShadowClockWeek)) {
+                var savedMaxWeek = getIsoWeeksInYear(shadowClockIsoYear);
+                shadowClockWeek = Math.max(1, Math.min(savedMaxWeek, Math.round(savedShadowClockWeek)));
+            }
+            var savedShadowClockLive = localStorage.getItem('shadowClockLive');
+            if (savedShadowClockLive === '0' || savedShadowClockLive === '1') {
+                shadowClockLive = savedShadowClockLive === '1';
+            }
         } catch (e) {}
 
         function paletteModeToIndex(modeKey) {
@@ -1313,6 +2082,7 @@
                     localStorage.setItem('scorePaletteCollapsed', paletteSliderCollapsed ? '1' : '0');
                 } catch (e) {}
             }
+            updateFeedbackBlockVisibility();
         }
 
         function refreshScorePaletteRendering() {
@@ -1323,6 +2093,7 @@
                     markerLayer.setStyle(style_spt_ai_combined_1_0(markerLayer.feature));
                 });
             }
+            updateMapillaryOverlayStyles();
             applyAreaAverageButtonStyles();
         }
 
@@ -1365,6 +2136,546 @@
                 mix(start[1], end[1], t) + ',' +
                 mix(start[2], end[2], t) +
             ')';
+        }
+
+        function getMapillaryFeatureScore(feature) {
+            var p = (feature && feature.properties) ? feature.properties : {};
+            var candidates = [
+                p['score'],
+                p['AI overall score (-5 to +5)'],
+                p['AI_overall'],
+                p['ai_overall'],
+                p['ai_sentiment_score']
+            ];
+            for (var i = 0; i < candidates.length; i++) {
+                var v = Number(candidates[i]);
+                if (Number.isFinite(v)) return clampScore(v);
+            }
+            return 0;
+        }
+
+        function buildMapillaryRoadBandSegments(geojson, options) {
+            var opts = options || {};
+            var snapMeters = Number.isFinite(opts.snapMeters) ? Math.max(1, opts.snapMeters) : 3.5;
+            var connectDistanceM = Number.isFinite(opts.connectDistanceM) ? Math.max(8, opts.connectDistanceM) : 28;
+            var minDistanceM = Number.isFinite(opts.minDistanceM) ? Math.max(1, opts.minDistanceM) : 2.5;
+            var maxScoreDelta = Number.isFinite(opts.maxScoreDelta) ? Math.max(0, opts.maxScoreDelta) : 1.35;
+            var axisRadiusM = Number.isFinite(opts.axisRadiusM) ? Math.max(12, opts.axisRadiusM) : 32;
+            var minAxisAlignment = Number.isFinite(opts.minAxisAlignment) ? Math.max(0, Math.min(1, opts.minAxisAlignment)) : 0.55;
+            var supportCorridorM = Number.isFinite(opts.supportCorridorM) ? Math.max(1.5, opts.supportCorridorM) : 4.5;
+            var supportMinDistanceM = Number.isFinite(opts.supportMinDistanceM) ? Math.max(8, opts.supportMinDistanceM) : 18;
+            var minSupportPoints = Number.isFinite(opts.minSupportPoints) ? Math.max(0, Math.round(opts.minSupportPoints)) : 1;
+            var degreeLimit = Number.isFinite(opts.degreeLimit) ? Math.max(1, Math.round(opts.degreeLimit)) : 2;
+            var minTurnAngleDeg = Number.isFinite(opts.minTurnAngleDeg) ? Math.max(0, Math.min(179, opts.minTurnAngleDeg)) : 60;
+            var features = geojson && geojson.features ? geojson.features : [];
+            if (!features.length) return [];
+
+            function toCellKey(x, y, cellSize) {
+                return Math.floor(x / cellSize) + ':' + Math.floor(y / cellSize);
+            }
+
+            function dot(ax, ay, bx, by) {
+                return ax * bx + ay * by;
+            }
+
+            function maybeUnit(vx, vy) {
+                var m = Math.sqrt(vx * vx + vy * vy);
+                if (!Number.isFinite(m) || m < 1e-6) return null;
+                return { x: vx / m, y: vy / m };
+            }
+
+            function headingAlignment(unitVec, axisVec) {
+                if (!unitVec || !axisVec) return 1;
+                return Math.abs(dot(unitVec.x, unitVec.y, axisVec.x, axisVec.y));
+            }
+
+            function segmentSupportCount(nodeA, nodeB, nodesList, gridByCell, cellSize) {
+                var dx = nodeB.x - nodeA.x;
+                var dy = nodeB.y - nodeA.y;
+                var segLen = Math.sqrt(dx * dx + dy * dy);
+                if (!Number.isFinite(segLen) || segLen < 1e-6) return 0;
+
+                var minX = Math.min(nodeA.x, nodeB.x) - supportCorridorM;
+                var maxX = Math.max(nodeA.x, nodeB.x) + supportCorridorM;
+                var minY = Math.min(nodeA.y, nodeB.y) - supportCorridorM;
+                var maxY = Math.max(nodeA.y, nodeB.y) + supportCorridorM;
+                var cMinX = Math.floor(minX / cellSize);
+                var cMaxX = Math.floor(maxX / cellSize);
+                var cMinY = Math.floor(minY / cellSize);
+                var cMaxY = Math.floor(maxY / cellSize);
+
+                var support = 0;
+                var seenNode = {};
+                for (var gx = cMinX; gx <= cMaxX; gx++) {
+                    for (var gy = cMinY; gy <= cMaxY; gy++) {
+                        var ids = gridByCell[gx + ':' + gy];
+                        if (!ids) continue;
+                        for (var ii = 0; ii < ids.length; ii++) {
+                            var idx = ids[ii];
+                            if (idx === nodeA.idx || idx === nodeB.idx) continue;
+                            if (seenNode[idx]) continue;
+                            seenNode[idx] = true;
+                            var n = nodesList[idx];
+                            var vx = n.x - nodeA.x;
+                            var vy = n.y - nodeA.y;
+                            var t = dot(vx, vy, dx, dy) / (segLen * segLen);
+                            if (t <= 0.06 || t >= 0.94) continue;
+                            var px = nodeA.x + t * dx;
+                            var py = nodeA.y + t * dy;
+                            var ox = n.x - px;
+                            var oy = n.y - py;
+                            var perp = Math.sqrt(ox * ox + oy * oy);
+                            if (perp <= supportCorridorM) {
+                                support += 1;
+                            }
+                        }
+                    }
+                }
+                return support;
+            }
+
+            function localAxisForNode(nodeIndex, nodesList, gridByCell, cellSize) {
+                var node = nodesList[nodeIndex];
+                var centerX = Math.floor(node.x / cellSize);
+                var centerY = Math.floor(node.y / cellSize);
+                var searchR = Math.max(1, Math.ceil(axisRadiusM / cellSize));
+                var neighbors = [];
+                var seen = {};
+                for (var dx = -searchR; dx <= searchR; dx++) {
+                    for (var dy = -searchR; dy <= searchR; dy++) {
+                        var ids = gridByCell[(centerX + dx) + ':' + (centerY + dy)];
+                        if (!ids) continue;
+                        for (var i = 0; i < ids.length; i++) {
+                            var ni = ids[i];
+                            if (ni === nodeIndex || seen[ni]) continue;
+                            seen[ni] = true;
+                            var n = nodesList[ni];
+                            var ox = n.x - node.x;
+                            var oy = n.y - node.y;
+                            var d = Math.sqrt(ox * ox + oy * oy);
+                            if (d <= axisRadiusM) neighbors.push({ x: ox, y: oy });
+                        }
+                    }
+                }
+                if (neighbors.length < 3) return null;
+                var sxx = 0;
+                var sxy = 0;
+                var syy = 0;
+                for (var k = 0; k < neighbors.length; k++) {
+                    var nx = neighbors[k].x;
+                    var ny = neighbors[k].y;
+                    sxx += nx * nx;
+                    sxy += nx * ny;
+                    syy += ny * ny;
+                }
+                if ((sxx + syy) < 1e-6) return null;
+                var theta = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+                return { x: Math.cos(theta), y: Math.sin(theta) };
+            }
+
+            function turnAngleDeg(fromNode, centerNode, toNode) {
+                var v1 = maybeUnit(fromNode.x - centerNode.x, fromNode.y - centerNode.y);
+                var v2 = maybeUnit(toNode.x - centerNode.x, toNode.y - centerNode.y);
+                if (!v1 || !v2) return 180;
+                var c = Math.max(-1, Math.min(1, dot(v1.x, v1.y, v2.x, v2.y)));
+                return Math.acos(c) * 180 / Math.PI;
+            }
+
+            var rawPoints = [];
+            var latSum = 0;
+            var lonSum = 0;
+            for (var fi = 0; fi < features.length; fi++) {
+                var f = features[fi] || {};
+                var g = f.geometry || {};
+                var c = g.coordinates || [];
+                if (!Array.isArray(c) || c.length < 2) continue;
+                var lon = Number(c[0]);
+                var lat = Number(c[1]);
+                if (!Number.isFinite(lon) || !Number.isFinite(lat)) continue;
+                rawPoints.push({ lat: lat, lon: lon, score: getMapillaryFeatureScore(f) });
+                latSum += lat;
+                lonSum += lon;
+            }
+            if (!rawPoints.length) return [];
+
+            var originLat = latSum / rawPoints.length;
+            var originLon = lonSum / rawPoints.length;
+            var metersPerLat = 111320;
+            var metersPerLon = Math.max(1, 111320 * Math.cos(originLat * Math.PI / 180));
+
+            var snappedNodesByKey = {};
+            for (var rp = 0; rp < rawPoints.length; rp++) {
+                var pt = rawPoints[rp];
+                var x = (pt.lon - originLon) * metersPerLon;
+                var y = (pt.lat - originLat) * metersPerLat;
+                var gx = Math.round(x / snapMeters);
+                var gy = Math.round(y / snapMeters);
+                var key = gx + ':' + gy;
+                if (!snappedNodesByKey[key]) {
+                    snappedNodesByKey[key] = {
+                        sumLat: 0,
+                        sumLon: 0,
+                        sumX: 0,
+                        sumY: 0,
+                        sumScore: 0,
+                        count: 0
+                    };
+                }
+                var agg = snappedNodesByKey[key];
+                agg.sumLat += pt.lat;
+                agg.sumLon += pt.lon;
+                agg.sumX += x;
+                agg.sumY += y;
+                agg.sumScore += pt.score;
+                agg.count += 1;
+            }
+
+            var nodes = [];
+            Object.keys(snappedNodesByKey).forEach(function (k) {
+                var n = snappedNodesByKey[k];
+                if (!n || n.count < 1) return;
+                nodes.push({
+                    idx: nodes.length,
+                    lat: n.sumLat / n.count,
+                    lon: n.sumLon / n.count,
+                    x: n.sumX / n.count,
+                    y: n.sumY / n.count,
+                    score: n.sumScore / n.count,
+                    count: n.count
+                });
+            });
+            if (nodes.length < 2) return [];
+
+            var cellSize = connectDistanceM;
+            var nodeGrid = {};
+            for (var ni = 0; ni < nodes.length; ni++) {
+                var nCellKey = toCellKey(nodes[ni].x, nodes[ni].y, cellSize);
+                if (!nodeGrid[nCellKey]) nodeGrid[nCellKey] = [];
+                nodeGrid[nCellKey].push(ni);
+            }
+
+            var nodeAxes = new Array(nodes.length);
+            for (var ai = 0; ai < nodes.length; ai++) {
+                nodeAxes[ai] = localAxisForNode(ai, nodes, nodeGrid, cellSize);
+            }
+
+            var candidateEdges = [];
+            var seenPair = {};
+            for (var a = 0; a < nodes.length; a++) {
+                var nodeA = nodes[a];
+                var cellX = Math.floor(nodeA.x / cellSize);
+                var cellY = Math.floor(nodeA.y / cellSize);
+                for (var dx = -1; dx <= 1; dx++) {
+                    for (var dy = -1; dy <= 1; dy++) {
+                        var ids = nodeGrid[(cellX + dx) + ':' + (cellY + dy)];
+                        if (!ids) continue;
+                        for (var ii = 0; ii < ids.length; ii++) {
+                            var b = ids[ii];
+                            if (b <= a) continue;
+                            var pairKey = a + ':' + b;
+                            if (seenPair[pairKey]) continue;
+                            seenPair[pairKey] = true;
+                            var nodeB = nodes[b];
+                            var vx = nodeB.x - nodeA.x;
+                            var vy = nodeB.y - nodeA.y;
+                            var dist = Math.sqrt(vx * vx + vy * vy);
+                            if (dist < minDistanceM || dist > connectDistanceM) continue;
+                            if (Math.abs(nodeA.score - nodeB.score) > maxScoreDelta) continue;
+
+                            var unit = maybeUnit(vx, vy);
+                            if (!unit) continue;
+                            var alignA = headingAlignment(unit, nodeAxes[a]);
+                            var alignB = headingAlignment(unit, nodeAxes[b]);
+                            if (alignA < minAxisAlignment && alignB < minAxisAlignment) continue;
+
+                            var support = 0;
+                            if (dist >= supportMinDistanceM) {
+                                support = segmentSupportCount(nodeA, nodeB, nodes, nodeGrid, cellSize);
+                                if (support < minSupportPoints) continue;
+                            }
+                            var quality = (support * 2.2) + alignA + alignB - (dist / connectDistanceM);
+                            candidateEdges.push({
+                                a: a,
+                                b: b,
+                                dist: dist,
+                                support: support,
+                                quality: quality
+                            });
+                        }
+                    }
+                }
+            }
+
+            candidateEdges.sort(function (left, right) {
+                if (right.quality !== left.quality) return right.quality - left.quality;
+                if (left.dist !== right.dist) return left.dist - right.dist;
+                return right.support - left.support;
+            });
+
+            var neighbors = new Array(nodes.length);
+            var degree = new Array(nodes.length);
+            for (var init = 0; init < nodes.length; init++) {
+                neighbors[init] = [];
+                degree[init] = 0;
+            }
+
+            var selectedEdges = [];
+            for (var ce = 0; ce < candidateEdges.length; ce++) {
+                var edge = candidateEdges[ce];
+                var ia = edge.a;
+                var ib = edge.b;
+                if (degree[ia] >= degreeLimit || degree[ib] >= degreeLimit) continue;
+
+                var okA = true;
+                if (neighbors[ia].length > 0) {
+                    var existingA = nodes[neighbors[ia][0]];
+                    var angleA = turnAngleDeg(existingA, nodes[ia], nodes[ib]);
+                    if (angleA < minTurnAngleDeg) okA = false;
+                }
+                var okB = true;
+                if (neighbors[ib].length > 0) {
+                    var existingB = nodes[neighbors[ib][0]];
+                    var angleB = turnAngleDeg(existingB, nodes[ib], nodes[ia]);
+                    if (angleB < minTurnAngleDeg) okB = false;
+                }
+                if (!okA || !okB) continue;
+
+                selectedEdges.push(edge);
+                neighbors[ia].push(ib);
+                neighbors[ib].push(ia);
+                degree[ia] += 1;
+                degree[ib] += 1;
+            }
+
+            if (!selectedEdges.length) return [];
+
+            var edgeByKey = {};
+            for (var se = 0; se < selectedEdges.length; se++) {
+                var e = selectedEdges[se];
+                var kLow = Math.min(e.a, e.b);
+                var kHigh = Math.max(e.a, e.b);
+                edgeByKey[kLow + ':' + kHigh] = e;
+            }
+
+            function getEdgeKey(u, v) {
+                return (u < v) ? (u + ':' + v) : (v + ':' + u);
+            }
+
+            var visitedEdges = {};
+            var paths = [];
+
+            function walkPath(startNode, nextNode) {
+                var path = [startNode, nextNode];
+                visitedEdges[getEdgeKey(startNode, nextNode)] = true;
+                var prev = startNode;
+                var curr = nextNode;
+                var guard = 0;
+                while (guard < nodes.length + 4) {
+                    guard += 1;
+                    var nbrs = neighbors[curr] || [];
+                    var candidate = null;
+                    for (var ni2 = 0; ni2 < nbrs.length; ni2++) {
+                        var maybe = nbrs[ni2];
+                        if (maybe === prev) continue;
+                        var eKey = getEdgeKey(curr, maybe);
+                        if (visitedEdges[eKey]) continue;
+                        candidate = maybe;
+                        break;
+                    }
+                    if (candidate === null) break;
+                    visitedEdges[getEdgeKey(curr, candidate)] = true;
+                    path.push(candidate);
+                    prev = curr;
+                    curr = candidate;
+                }
+                return path;
+            }
+
+            for (var pn = 0; pn < nodes.length; pn++) {
+                if ((neighbors[pn] || []).length !== 1) continue;
+                var onlyNbr = neighbors[pn][0];
+                var firstKey = getEdgeKey(pn, onlyNbr);
+                if (visitedEdges[firstKey]) continue;
+                paths.push(walkPath(pn, onlyNbr));
+            }
+
+            for (var pz = 0; pz < nodes.length; pz++) {
+                var nz = neighbors[pz] || [];
+                for (var nzIdx = 0; nzIdx < nz.length; nzIdx++) {
+                    var n2 = nz[nzIdx];
+                    var eK = getEdgeKey(pz, n2);
+                    if (visitedEdges[eK]) continue;
+                    paths.push(walkPath(pz, n2));
+                }
+            }
+
+            var out = [];
+            for (var pi = 0; pi < paths.length; pi++) {
+                var nodePath = paths[pi];
+                if (!nodePath || nodePath.length < 2) continue;
+                var latlngs = [];
+                var bucketWeights = {};
+                for (var pj = 0; pj < nodePath.length; pj++) {
+                    var nodeObj = nodes[nodePath[pj]];
+                    latlngs.push([nodeObj.lat, nodeObj.lon]);
+                    var bucket = String(Math.round(clampScore(nodeObj.score)));
+                    bucketWeights[bucket] = (bucketWeights[bucket] || 0) + nodeObj.count;
+                }
+                var winningBucket = 0;
+                var winningWeight = -1;
+                Object.keys(bucketWeights).forEach(function (bucketKey) {
+                    var bw = bucketWeights[bucketKey];
+                    if (bw > winningWeight) {
+                        winningWeight = bw;
+                        winningBucket = Number(bucketKey);
+                    }
+                });
+                if (!Number.isFinite(winningBucket)) winningBucket = 0;
+                out.push({
+                    latlngs: latlngs,
+                    score: clampScore(winningBucket)
+                });
+            }
+            return out;
+        }
+
+        function buildMapillaryRoadBandLayer(geojson) {
+            var segments = buildMapillaryRoadBandSegments(geojson, {
+                snapMeters: 3.5,
+                connectDistanceM: 28,
+                minDistanceM: 2.5,
+                maxScoreDelta: 1.35,
+                axisRadiusM: 32,
+                minAxisAlignment: 0.55,
+                supportCorridorM: 4.5,
+                supportMinDistanceM: 18,
+                minSupportPoints: 1,
+                degreeLimit: 2,
+                minTurnAngleDeg: 60
+            });
+            var group = L.layerGroup();
+            for (var i = 0; i < segments.length; i++) {
+                var seg = segments[i];
+                var score = clampScore(Number(seg.score));
+                if (!Number.isFinite(score)) score = 0;
+                var line = L.polyline(seg.latlngs, {
+                    pane: 'pane_mapillary_heat_1',
+                    color: scoreToColor(score),
+                    weight: 9,
+                    opacity: 0.72,
+                    lineCap: 'round',
+                    lineJoin: 'round',
+                    smoothFactor: 1.0,
+                    interactive: false
+                });
+                line._mapillaryScore = score;
+                group.addLayer(line);
+            }
+            return group;
+        }
+
+        function style_mapillary_colored_dots_1_0(feature) {
+            var score = getMapillaryFeatureScore(feature);
+            return {
+                pane: 'pane_mapillary_colored_dots_1',
+                radius: 4.0,
+                opacity: 1,
+                color: '#ffffff',
+                weight: 0.9,
+                fill: true,
+                fillOpacity: 0.95,
+                fillColor: scoreToColor(score),
+                interactive: false,
+            };
+        }
+
+        var layer_mapillary_colored_dots_1 = null;
+        var layer_mapillary_heat_1 = null;
+        function updateMapillaryOverlayStyles() {
+            if (layer_mapillary_colored_dots_1 && layer_mapillary_colored_dots_1.eachLayer) {
+                layer_mapillary_colored_dots_1.eachLayer(function (markerLayer) {
+                    if (!markerLayer || !markerLayer.feature || !markerLayer.setStyle) return;
+                    markerLayer.setStyle(style_mapillary_colored_dots_1_0(markerLayer.feature));
+                });
+            }
+            if (layer_mapillary_heat_1 && layer_mapillary_heat_1.eachLayer) {
+                layer_mapillary_heat_1.eachLayer(function (lineLayer) {
+                    if (!lineLayer || !lineLayer.setStyle) return;
+                    var segmentScore = Number(lineLayer._mapillaryScore);
+                    if (!Number.isFinite(segmentScore)) segmentScore = 0;
+                    lineLayer.setStyle({ color: scoreToColor(segmentScore) });
+                });
+            }
+        }
+
+        function setMapillaryOverlayMode(modeKey, persist) {
+            var nextMode = (modeKey === 'heat') ? 'heat' : 'dots';
+            currentMapillaryView = nextMode;
+            if (mapillaryViewSelect) {
+                mapillaryViewSelect.value = nextMode;
+            }
+            if (layer_mapillary_colored_dots_1 && map.hasLayer(layer_mapillary_colored_dots_1)) {
+                map.removeLayer(layer_mapillary_colored_dots_1);
+            }
+            if (layer_mapillary_heat_1 && map.hasLayer(layer_mapillary_heat_1)) {
+                map.removeLayer(layer_mapillary_heat_1);
+            }
+            if (showMapillaryData) {
+                if (nextMode === 'heat') {
+                    if (layer_mapillary_heat_1) map.addLayer(layer_mapillary_heat_1);
+                } else {
+                    if (layer_mapillary_colored_dots_1) map.addLayer(layer_mapillary_colored_dots_1);
+                }
+            }
+            if (mapillaryDataToggle) {
+                mapillaryDataToggle.checked = showMapillaryData;
+            }
+            if (persist) {
+                try {
+                    localStorage.setItem('mapillaryOverlayMode', currentMapillaryView);
+                } catch (e) {}
+            }
+        }
+
+        function setMapillaryDataVisibility(visible, persist) {
+            showMapillaryData = !!visible;
+            if (!showMapillaryData) {
+                if (layer_mapillary_colored_dots_1 && map.hasLayer(layer_mapillary_colored_dots_1)) {
+                    map.removeLayer(layer_mapillary_colored_dots_1);
+                }
+                if (layer_mapillary_heat_1 && map.hasLayer(layer_mapillary_heat_1)) {
+                    map.removeLayer(layer_mapillary_heat_1);
+                }
+            } else {
+                setMapillaryOverlayMode(currentMapillaryView, false);
+            }
+            if (mapillaryDataToggle) {
+                mapillaryDataToggle.checked = showMapillaryData;
+            }
+            if (persist) {
+                try {
+                    localStorage.setItem('showMapillaryData', showMapillaryData ? '1' : '0');
+                } catch (e) {}
+            }
+        }
+
+        function setGroupPhotosVisibility(visible, persist) {
+            showGroupPhotos = !!visible;
+            if (typeof layer_spt_ai_combined_1 !== 'undefined' && layer_spt_ai_combined_1) {
+                if (showGroupPhotos) {
+                    if (!map.hasLayer(layer_spt_ai_combined_1)) map.addLayer(layer_spt_ai_combined_1);
+                } else if (map.hasLayer(layer_spt_ai_combined_1)) {
+                    map.removeLayer(layer_spt_ai_combined_1);
+                }
+            }
+            if (groupPhotosToggle) {
+                groupPhotosToggle.checked = showGroupPhotos;
+            }
+            if (persist) {
+                try {
+                    localStorage.setItem('showGroupPhotos', showGroupPhotos ? '1' : '0');
+                } catch (e) {}
+            }
         }
 
         // Area means from currently shown map dots:
@@ -1451,6 +2762,27 @@
         bounds_group.addLayer(layer_spt_ai_combined_1);
         map.addLayer(layer_spt_ai_combined_1);
 
+        map.createPane('pane_mapillary_heat_1');
+        map.getPane('pane_mapillary_heat_1').style.zIndex = 402;
+        map.getPane('pane_mapillary_heat_1').style['mix-blend-mode'] = 'normal';
+
+        map.createPane('pane_mapillary_colored_dots_1');
+        map.getPane('pane_mapillary_colored_dots_1').style.zIndex = 403;
+        map.getPane('pane_mapillary_colored_dots_1').style['mix-blend-mode'] = 'normal';
+
+        layer_mapillary_colored_dots_1 = new L.geoJson(json_mapillary_downloaded_points, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_mapillary_downloaded_points',
+            layerName: 'layer_mapillary_colored_dots_1',
+            pane: 'pane_mapillary_colored_dots_1',
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, style_mapillary_colored_dots_1_0(feature));
+            },
+        });
+
+        layer_mapillary_heat_1 = buildMapillaryRoadBandLayer(json_mapillary_downloaded_points);
+
         if (scorePaletteSlider) {
             scorePaletteSlider.addEventListener('input', function () {
                 setScorePaletteMode(paletteIndexToMode(scorePaletteSlider.value), true);
@@ -1477,9 +2809,101 @@
                 setBasemapMode(basemapSelect.value, true);
             });
         }
+        if (mapillaryViewSelect) {
+            mapillaryViewSelect.addEventListener('change', function () {
+                setMapillaryOverlayMode(mapillaryViewSelect.value, true);
+            });
+        }
+        if (groupPhotosToggle) {
+            groupPhotosToggle.checked = showGroupPhotos;
+            groupPhotosToggle.addEventListener('change', function () {
+                setGroupPhotosVisibility(groupPhotosToggle.checked, true);
+            });
+        }
+        if (mapillaryDataToggle) {
+            mapillaryDataToggle.checked = showMapillaryData;
+            mapillaryDataToggle.addEventListener('change', function () {
+                setMapillaryDataVisibility(mapillaryDataToggle.checked, true);
+            });
+        }
+        if (shadowWeekToggleBtn) {
+            shadowWeekToggleBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setShadowWeekPanelOpen(!shadowWeekPanelOpen);
+            });
+        }
+        if (shadowWeekPanel) {
+            shadowWeekPanel.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        }
+        if (shadowWeekSlider) {
+            shadowWeekSlider.value = String(shadowClockWeek);
+            shadowWeekSlider.addEventListener('input', function () {
+                shadowClockWeek = Number(shadowWeekSlider.value);
+                if (shadowClockLive) {
+                    setShadowClockLiveMode(false, true);
+                } else {
+                    applyShadowClockTime(true);
+                }
+            });
+            shadowWeekSlider.addEventListener('change', function () {
+                shadowClockWeek = Number(shadowWeekSlider.value);
+                applyShadowClockTime(true);
+            });
+        }
+        document.addEventListener('click', function (e) {
+            if (!shadowWeekPanelOpen) return;
+            var target = e.target;
+            if (shadowClockControl && target && shadowClockControl.contains(target)) return;
+            setShadowWeekPanelOpen(false);
+        });
+        if (shadowTimeSlider) {
+            shadowTimeSlider.value = String(shadowClockMinutes);
+            shadowTimeSlider.addEventListener('input', function () {
+                shadowClockMinutes = Number(shadowTimeSlider.value);
+                if (shadowClockLive) {
+                    setShadowClockLiveMode(false, true);
+                } else {
+                    applyShadowClockTime(true);
+                }
+            });
+            shadowTimeSlider.addEventListener('change', function () {
+                shadowClockMinutes = Number(shadowTimeSlider.value);
+                applyShadowClockTime(true);
+            });
+        }
+        if (shadowNowBtn) {
+            shadowNowBtn.addEventListener('click', function () {
+                syncShadowDateFromNow();
+                if (shadowClockLive) {
+                    setShadowClockLiveMode(true, true);
+                } else {
+                    applyShadowClockTime(true);
+                }
+            });
+        }
+        if (shadowLiveToggle) {
+            shadowLiveToggle.checked = shadowClockLive;
+            shadowLiveToggle.addEventListener('change', function () {
+                setShadowClockLiveMode(shadowLiveToggle.checked, true);
+            });
+        }
+        setShadowWeekPanelOpen(false);
         setBasemapMode(currentBasemapMode, false);
         setPaletteSliderCollapsed(paletteSliderCollapsed, false);
         setScorePaletteMode(currentScorePaletteMode, false);
+        setMapillaryOverlayMode(currentMapillaryView, false);
+        setGroupPhotosVisibility(showGroupPhotos, false);
+        setMapillaryDataVisibility(showMapillaryData, false);
+        if (shadowClockLive) {
+            setShadowClockLiveMode(true, false);
+        } else {
+            setShadowClockLiveMode(false, false);
+        }
+        map.on('unload', function () {
+            stopShadowClockTimer();
+        });
 
                 setBounds();
         </script>

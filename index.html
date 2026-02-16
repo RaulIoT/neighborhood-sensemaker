@@ -898,7 +898,7 @@
                 <div id="mapLabelsBlock" class="map-labels-block hidden">
                     <div class="map-labels-title"><strong>Leppävaara + Kivenlahti + Mankkaa — AI Map (SPT UE 2026)</strong></div>
                     <div class="map-labels-subtitle">
-                        Tap a dot to view the AI label, score, and short explanation.<br>
+                        Tap a bigger dot with black rims. To make tapping easier, please hide Mapillary dots from color settings.<br>
                         Analysis is generated with ChatGPT (GPT-5) for the SPT Urban Experience course (2026).<br><br>
                         Mankkaa lighting comparison (not color-only):
                         <div class="map-dot-key">
@@ -1663,6 +1663,20 @@
             });
             return pairs.join('&');
         }
+        function submitFeedbackViaNativePostFallback() {
+            if (!feedbackForm) return false;
+            try {
+                updateFeedbackContextFields();
+                if (typeof HTMLFormElement !== 'undefined' &&
+                    HTMLFormElement.prototype &&
+                    typeof HTMLFormElement.prototype.submit === 'function') {
+                    // Bypass JS submit handler to force a native POST to Netlify.
+                    HTMLFormElement.prototype.submit.call(feedbackForm);
+                    return true;
+                }
+            } catch (e) {}
+            return false;
+        }
         function getFeedbackPayloadObject() {
             if (!feedbackForm) return {};
             updateFeedbackContextFields();
@@ -1717,7 +1731,10 @@
                     setFeedbackStatus('Thanks. Feedback sent to Netlify.', false);
                     setFeedbackFormOpen(false);
                 }).catch(function () {
-                    setFeedbackStatus('Could not send to Netlify Forms. Check site deploy and forms setup.', true);
+                    var usedFallback = submitFeedbackViaNativePostFallback();
+                    if (!usedFallback) {
+                        setFeedbackStatus('Could not send to Netlify Forms. Check site deploy and forms setup.', true);
+                    }
                 }).finally(function () {
                     if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = false;
                 });

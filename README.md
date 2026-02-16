@@ -85,6 +85,20 @@ python scripts/prepare_netlify_package.py --source . --target ../SPT_Map_Final_s
 
 This checks text files for potential path/secret leakage and can strip EXIF metadata from images.
 
+## Netlify Forms poll checklist
+
+The map contains a Netlify form named `ai_sentiment_poll` in `index.html`.
+
+1. Deploy this folder as the published site root (`publish = "."` in `netlify.toml`).
+2. Open the live site (not `localhost`) and submit the poll once.
+3. In Netlify UI, open `Forms` and confirm `ai_sentiment_poll` appears with the submission.
+
+If the form does not appear after first deploy:
+
+1. Trigger a full redeploy (clear cache and deploy site).
+2. Confirm deployed `index.html` still contains `name="ai_sentiment_poll"` and `data-netlify="true"`.
+3. Submit again from the live Netlify URL.
+
 ## Git / GitHub quick start
 
 ```bash

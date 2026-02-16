@@ -1,0 +1,4 @@
+[build]
+publish = "."
+# Static qgis2web site: no transform/build pipeline required.
+command = "echo \"Static deploy: no build step\""

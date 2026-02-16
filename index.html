@@ -373,42 +373,20 @@
         .map-feedback-form.hidden {
             display: none;
         }
-        .map-feedback-form label {
-            color: #d6d6d6;
-            font-size: 11px;
-        }
-        .map-feedback-rating-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .map-feedback-rating-row input[type="range"] {
-            flex: 1 1 auto;
-            accent-color: #8e8e8e;
-        }
-        .map-feedback-rating-value {
-            width: 22px;
-            text-align: center;
-            color: #fff;
-            font-weight: 700;
-        }
-        .map-feedback-form textarea {
-            background: #0f0f0f;
-            color: #fff;
+        .map-google-form-embed {
+            width: 100%;
+            min-height: 680px;
             border: 1px solid #444;
             border-radius: 6px;
-            padding: 6px 8px;
-            min-height: 72px;
-            resize: vertical;
-            font-size: 12px;
-            font-family: inherit;
+            background: #fff;
         }
         .map-feedback-actions {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-        .map-feedback-actions button {
+        .map-feedback-actions button,
+        .map-google-form-link {
             background: #0f0f0f;
             color: #fff;
             border: 1px solid #444;
@@ -416,8 +394,11 @@
             padding: 5px 8px;
             font-size: 12px;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
         }
-        .map-feedback-actions button:hover {
+        .map-feedback-actions button:hover,
+        .map-google-form-link:hover {
             background: #171717;
         }
         .map-feedback-status {
@@ -427,9 +408,6 @@
         }
         .map-feedback-status.error {
             color: #ff9b9b;
-        }
-        .map-feedback-honeypot {
-            display: none;
         }
         .map-ui-row {
             display: flex;
@@ -893,19 +871,6 @@
         <title></title>
     </head>
     <body>
-        <form name="ai_sentiment_poll" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
-            <input type="hidden" name="form-name" value="ai_sentiment_poll">
-            <input type="text" name="bot-field">
-            <input type="text" name="rating_0_to_10">
-            <textarea name="opinion"></textarea>
-            <input type="text" name="map_hash">
-            <input type="text" name="map_center_lat">
-            <input type="text" name="map_center_lon">
-            <input type="text" name="map_zoom">
-            <input type="text" name="selected_place">
-            <input type="text" name="submitted_at_utc">
-            <input type="text" name="site_origin">
-        </form>
         <div id="map">
             <div class="map-top-ui">
                 <div id="mapLabelsBlock" class="map-labels-block hidden">
@@ -963,32 +928,17 @@
                     </div>
                     <div class="map-feedback-block">
                         <button id="feedbackToggleBtn" class="map-feedback-toggle-btn" type="button" aria-expanded="false">
-                            ✨ Please give opinion of this AI sentiment - help thesis student :) ✨
+                            ✨ Please give opinion of this AI sentiment - help thesis student ✨
                         </button>
-                        <form id="feedbackForm" class="map-feedback-form hidden" name="ai_sentiment_poll" method="POST" action="" data-netlify="true" netlify-honeypot="bot-field">
-                            <input type="hidden" name="form-name" value="ai_sentiment_poll">
-                            <p class="map-feedback-honeypot">
-                                <label>Do not fill this field: <input name="bot-field"></label>
-                            </p>
-                            <label for="feedbackRating">Rating (0-10)</label>
-                            <div class="map-feedback-rating-row">
-                                <input id="feedbackRating" name="rating_0_to_10" type="range" min="0" max="10" step="1" value="0">
-                                <output id="feedbackRatingValue" class="map-feedback-rating-value" for="feedbackRating">0</output>
-                            </div>
-                            <label for="feedbackOpinion">Open opinion</label>
-                            <textarea id="feedbackOpinion" name="opinion" placeholder="What do you agree/disagree with in the AI sentiment?" maxlength="800" required></textarea>
-                            <input id="feedbackMapHash" type="hidden" name="map_hash">
-                            <input id="feedbackMapCenterLat" type="hidden" name="map_center_lat">
-                            <input id="feedbackMapCenterLon" type="hidden" name="map_center_lon">
-                            <input id="feedbackMapZoom" type="hidden" name="map_zoom">
-                            <input id="feedbackSelectedPlace" type="hidden" name="selected_place">
-                            <input id="feedbackSubmittedAt" type="hidden" name="submitted_at_utc">
-                            <input id="feedbackSiteOrigin" type="hidden" name="site_origin">
-                            <div class="map-feedback-actions">
-                                <button id="feedbackSubmitBtn" type="submit">Send</button>
-                            </div>
-                            <div id="feedbackStatus" class="map-feedback-status" aria-live="polite"></div>
-                        </form>
+                        <div id="feedbackForm" class="map-feedback-form hidden">
+                            <iframe
+                                id="googleFormFrame"
+                                class="map-google-form-embed"
+                                title="AI sentiment feedback Google Form"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <div id="googleFormHint" class="map-feedback-status error" aria-live="polite"></div>
+                        </div>
                     </div>
                     <div id="paletteSliderUi" class="palette-slider-ui" aria-label="Score color mode control">
                         <button id="paletteSliderToggleBtn" class="palette-toggle-btn" type="button" aria-expanded="true">Hide color mode</button>
@@ -1574,18 +1524,8 @@
         var mapillaryDataToggle = document.getElementById('mapillaryDataToggle');
         var feedbackToggleBtn = document.getElementById('feedbackToggleBtn');
         var feedbackForm = document.getElementById('feedbackForm');
-        var feedbackRating = document.getElementById('feedbackRating');
-        var feedbackRatingValue = document.getElementById('feedbackRatingValue');
-        var feedbackOpinion = document.getElementById('feedbackOpinion');
-        var feedbackSubmitBtn = document.getElementById('feedbackSubmitBtn');
-        var feedbackStatus = document.getElementById('feedbackStatus');
-        var feedbackMapHash = document.getElementById('feedbackMapHash');
-        var feedbackMapCenterLat = document.getElementById('feedbackMapCenterLat');
-        var feedbackMapCenterLon = document.getElementById('feedbackMapCenterLon');
-        var feedbackMapZoom = document.getElementById('feedbackMapZoom');
-        var feedbackSelectedPlace = document.getElementById('feedbackSelectedPlace');
-        var feedbackSubmittedAt = document.getElementById('feedbackSubmittedAt');
-        var feedbackSiteOrigin = document.getElementById('feedbackSiteOrigin');
+        var googleFormFrame = document.getElementById('googleFormFrame');
+        var googleFormHint = document.getElementById('googleFormHint');
         var mapCompass = document.getElementById('mapCompass');
         var shadowClockControl = document.getElementById('shadowClockControl');
         var shadowTimeSlider = document.getElementById('shadowTimeSlider');
@@ -1607,11 +1547,8 @@
         }
         var feedbackFormOpen = false;
         var latestSelectedPlaceLabel = '';
-        function setFeedbackStatus(message, isError) {
-            if (!feedbackStatus) return;
-            feedbackStatus.textContent = message || '';
-            feedbackStatus.classList.toggle('error', !!isError);
-        }
+        // Paste your public Google Forms "viewform" URL here.
+        var GOOGLE_FORM_VIEW_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf1eXF7gfjZIMMYzIlZyS5O_NHHA1Z3w8pjKvgcvEkfMA6coA/viewform';
         function setFeedbackFormOpen(open) {
             feedbackFormOpen = !!open;
             if (feedbackForm) {
@@ -1621,131 +1558,45 @@
                 feedbackToggleBtn.setAttribute('aria-expanded', feedbackFormOpen ? 'true' : 'false');
             }
         }
-        function feedbackRatingToColor(value) {
-            var v = Number(value);
-            if (!Number.isFinite(v)) v = 0;
-            v = Math.max(0, Math.min(10, v));
-            var t = v / 10;
-            var sat = Math.round(t * 100);
-            var light = Math.round(62 - (t * 14));
-            return 'hsl(132,' + sat + '%,' + light + '%)';
+        function toGoogleFormEmbedUrl(viewUrl) {
+            var cleanUrl = String(viewUrl || '').trim();
+            if (!cleanUrl) return '';
+            if (cleanUrl.indexOf('/viewform') === -1) return cleanUrl;
+            if (/[?&]embedded=true(?:&|$)/.test(cleanUrl)) return cleanUrl;
+            return cleanUrl + (cleanUrl.indexOf('?') === -1 ? '?embedded=true' : '&embedded=true');
         }
-        function updateFeedbackRatingDisplay() {
-            if (!feedbackRating || !feedbackRatingValue) return;
-            var val = Number(feedbackRating.value);
-            if (!Number.isFinite(val)) val = 0;
-            val = Math.max(0, Math.min(10, Math.round(val)));
-            feedbackRatingValue.textContent = String(val);
-            var color = feedbackRatingToColor(val);
-            feedbackRating.style.accentColor = color;
-            feedbackRatingValue.style.color = color;
-        }
-        function updateFeedbackContextFields() {
-            if (feedbackMapHash) {
-                feedbackMapHash.value = String(window.location.hash || '');
+        function initializeGoogleFormEmbed() {
+            var viewUrl = String(GOOGLE_FORM_VIEW_URL || '').trim();
+            var embedUrl = toGoogleFormEmbedUrl(viewUrl);
+            if (googleFormFrame) {
+                if (embedUrl) {
+                    googleFormFrame.src = embedUrl;
+                    googleFormFrame.style.display = 'block';
+                } else {
+                    googleFormFrame.removeAttribute('src');
+                    googleFormFrame.style.display = 'none';
+                }
             }
-            var center = map.getCenter ? map.getCenter() : null;
-            if (center) {
-                if (feedbackMapCenterLat) feedbackMapCenterLat.value = Number(center.lat).toFixed(6);
-                if (feedbackMapCenterLon) feedbackMapCenterLon.value = Number(center.lng).toFixed(6);
+            if (googleFormHint) {
+                if (viewUrl) {
+                    googleFormHint.textContent = '';
+                    googleFormHint.style.display = 'none';
+                } else {
+                    googleFormHint.textContent = 'Google Form is not configured yet. Set GOOGLE_FORM_VIEW_URL in index.html.';
+                    googleFormHint.style.display = 'block';
+                }
             }
-            if (feedbackMapZoom && map.getZoom) {
-                feedbackMapZoom.value = String(map.getZoom());
-            }
-            if (feedbackSelectedPlace) {
-                feedbackSelectedPlace.value = latestSelectedPlaceLabel || '';
-            }
-            if (feedbackSubmittedAt) {
-                feedbackSubmittedAt.value = new Date().toISOString();
-            }
-            if (feedbackSiteOrigin) {
-                feedbackSiteOrigin.value = String(window.location.origin || '');
-            }
-        }
-        function isLocalPreviewMode() {
-            var host = String(window.location.hostname || '').toLowerCase();
-            var protocol = String(window.location.protocol || '').toLowerCase();
-            return protocol === 'file:' || host === 'localhost' || host === '127.0.0.1';
-        }
-        function encodeNetlifyForm(dataObj) {
-            var pairs = [];
-            Object.keys(dataObj || {}).forEach(function (key) {
-                var value = dataObj[key];
-                if (value === undefined || value === null) value = '';
-                pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(String(value)));
-            });
-            return pairs.join('&');
-        }
-        function getFeedbackPayloadObject() {
-            if (!feedbackForm) return {};
-            updateFeedbackContextFields();
-            var obj = {};
-            var fd = new FormData(feedbackForm);
-            fd.forEach(function (val, key) {
-                if (key === 'bot-field') return;
-                obj[key] = String(val);
-            });
-            obj['form-name'] = 'ai_sentiment_poll';
-            return obj;
         }
         if (feedbackToggleBtn) {
             feedbackToggleBtn.addEventListener('click', function () {
                 setFeedbackFormOpen(!feedbackFormOpen);
-                if (feedbackFormOpen && feedbackOpinion) {
-                    feedbackOpinion.focus();
+                if (feedbackFormOpen && googleFormFrame) {
+                    googleFormFrame.focus();
                 }
             });
         }
-        if (feedbackRating) {
-            feedbackRating.addEventListener('input', updateFeedbackRatingDisplay);
-            feedbackRating.addEventListener('change', updateFeedbackRatingDisplay);
-        }
-        if (feedbackForm) {
-            feedbackForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                setFeedbackStatus('', false);
-                var payload = getFeedbackPayloadObject();
-                if (!payload.opinion || !String(payload.opinion).trim()) {
-                    setFeedbackStatus('Please write a short opinion before sending.', true);
-                    if (feedbackOpinion) feedbackOpinion.focus();
-                    return;
-                }
-                if (isLocalPreviewMode()) {
-                    setFeedbackStatus('Local preview mode: deploy to Netlify to submit this poll.', true);
-                    return;
-                }
-                if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = true;
-                var body = encodeNetlifyForm(payload);
-                fetch('/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Accept': 'application/json'
-                    },
-                    body: body
-                }).then(function (response) {
-                    if (!response.ok) {
-                        var err = new Error('HTTP ' + response.status);
-                        err.status = response.status;
-                        throw err;
-                    }
-                    feedbackForm.reset();
-                    updateFeedbackRatingDisplay();
-                    setFeedbackStatus('Thanks. Feedback sent to Netlify.', false);
-                    setFeedbackFormOpen(false);
-                }).catch(function (err) {
-                    if (err && Number(err.status) === 404) {
-                        setFeedbackStatus('Netlify form not active yet (HTTP 404). Redeploy site and check Forms tab.', true);
-                    } else {
-                        setFeedbackStatus('Could not send to Netlify Forms. Check site deploy and forms setup.', true);
-                    }
-                }).finally(function () {
-                    if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = false;
-                });
-            });
-        }
+        initializeGoogleFormEmbed();
         setFeedbackFormOpen(false);
-        updateFeedbackRatingDisplay();
         var photoLightbox = document.getElementById('photoLightbox');
         var photoLightboxImg = document.getElementById('photoLightboxImg');
         var photoZoomInBtn = document.getElementById('photoZoomInBtn');

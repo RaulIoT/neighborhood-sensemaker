@@ -893,6 +893,19 @@
         <title></title>
     </head>
     <body>
+        <form name="ai_sentiment_poll" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+            <input type="hidden" name="form-name" value="ai_sentiment_poll">
+            <input type="text" name="bot-field">
+            <input type="text" name="rating_0_to_10">
+            <textarea name="opinion"></textarea>
+            <input type="text" name="map_hash">
+            <input type="text" name="map_center_lat">
+            <input type="text" name="map_center_lon">
+            <input type="text" name="map_zoom">
+            <input type="text" name="selected_place">
+            <input type="text" name="submitted_at_utc">
+            <input type="text" name="site_origin">
+        </form>
         <div id="map">
             <div class="map-top-ui">
                 <div id="mapLabelsBlock" class="map-labels-block hidden">
@@ -952,7 +965,7 @@
                         <button id="feedbackToggleBtn" class="map-feedback-toggle-btn" type="button" aria-expanded="false">
                             ✨ Please give opinion of this AI sentiment - help thesis student :) ✨
                         </button>
-                        <form id="feedbackForm" class="map-feedback-form hidden" name="ai_sentiment_poll" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field">
+                        <form id="feedbackForm" class="map-feedback-form hidden" name="ai_sentiment_poll" method="POST" action="" data-netlify="true" netlify-honeypot="bot-field">
                             <input type="hidden" name="form-name" value="ai_sentiment_poll">
                             <p class="map-feedback-honeypot">
                                 <label>Do not fill this field: <input name="bot-field"></label>
@@ -1663,20 +1676,6 @@
             });
             return pairs.join('&');
         }
-        function submitFeedbackViaNativePostFallback() {
-            if (!feedbackForm) return false;
-            try {
-                updateFeedbackContextFields();
-                if (typeof HTMLFormElement !== 'undefined' &&
-                    HTMLFormElement.prototype &&
-                    typeof HTMLFormElement.prototype.submit === 'function') {
-                    // Bypass JS submit handler to force a native POST to Netlify.
-                    HTMLFormElement.prototype.submit.call(feedbackForm);
-                    return true;
-                }
-            } catch (e) {}
-            return false;
-        }
         function getFeedbackPayloadObject() {
             if (!feedbackForm) return {};
             updateFeedbackContextFields();
@@ -1725,14 +1724,19 @@
                     },
                     body: body
                 }).then(function (response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    if (!response.ok) {
+                        var err = new Error('HTTP ' + response.status);
+                        err.status = response.status;
+                        throw err;
+                    }
                     feedbackForm.reset();
                     updateFeedbackRatingDisplay();
                     setFeedbackStatus('Thanks. Feedback sent to Netlify.', false);
                     setFeedbackFormOpen(false);
-                }).catch(function () {
-                    var usedFallback = submitFeedbackViaNativePostFallback();
-                    if (!usedFallback) {
+                }).catch(function (err) {
+                    if (err && Number(err.status) === 404) {
+                        setFeedbackStatus('Netlify form not active yet (HTTP 404). Redeploy site and check Forms tab.', true);
+                    } else {
                         setFeedbackStatus('Could not send to Netlify Forms. Check site deploy and forms setup.', true);
                     }
                 }).finally(function () {

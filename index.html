@@ -46,6 +46,8 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
         }
         .map-labels-title {
             font-size: 14px;
@@ -188,6 +190,7 @@
             display: flex;
             flex-direction: column;
             gap: 0;
+            touch-action: pan-y;
         }
         .map-top-controls .map-ui-row {
             margin-top: 0;
@@ -1521,6 +1524,7 @@
         var scoreLegendBar = document.getElementById('scoreLegendBar');
         var scoreLegendLowLabel = document.getElementById('scoreLegendLowLabel');
         var scoreLegendHighLabel = document.getElementById('scoreLegendHighLabel');
+        var mapTopUiPanel = document.querySelector('.map-top-ui');
         var paletteSliderUi = document.getElementById('paletteSliderUi');
         var paletteSliderBody = document.getElementById('paletteSliderBody');
         var paletteSliderToggleBtn = document.getElementById('paletteSliderToggleBtn');
@@ -1548,6 +1552,29 @@
         var shadowLiveToggle = document.getElementById('shadowLiveToggle');
         var creditsToggleBtn = document.getElementById('creditsToggleBtn');
         var creditsPanel = document.getElementById('creditsPanel');
+        function lockPanelTouchToPanel(el) {
+            if (!el) return;
+            if (typeof L !== 'undefined' && L.DomEvent) {
+                L.DomEvent.disableClickPropagation(el);
+                L.DomEvent.disableScrollPropagation(el);
+            }
+            el.addEventListener('touchstart', function (e) {
+                e.stopPropagation();
+            }, { passive: true });
+            el.addEventListener('touchmove', function (e) {
+                e.stopPropagation();
+            }, { passive: true });
+            el.addEventListener('wheel', function (e) {
+                e.stopPropagation();
+            }, { passive: true });
+            el.addEventListener('pointerdown', function (e) {
+                e.stopPropagation();
+            });
+        }
+        lockPanelTouchToPanel(mapTopUiPanel);
+        lockPanelTouchToPanel(mapLabelsBlock);
+        lockPanelTouchToPanel(paletteSliderBody);
+        lockPanelTouchToPanel(feedbackForm);
         if (creditsToggleBtn && creditsPanel) {
             creditsToggleBtn.addEventListener('click', function () {
                 var hidden = creditsPanel.classList.toggle('hidden');
